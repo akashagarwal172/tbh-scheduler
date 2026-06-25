@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Fair and balanced badminton round-robin scheduler for Tokyo Black Hawks">
+<meta name="theme-color" content="#1a6b3c">
+<link rel="manifest" href="data:application/manifest+json,{&quot;name&quot;:&quot;TBH Badminton Scheduler&quot;,&quot;short_name&quot;:&quot;TBH Scheduler&quot;,&quot;description&quot;:&quot;Fair badminton round-robin scheduling&quot;,&quot;start_url&quot;:&quot;/&quot;,&quot;display&quot;:&quot;standalone&quot;,&quot;background_color&quot;:&quot;#0f1a14&quot;,&quot;theme_color&quot;:&quot;#f5c842&quot;,&quot;icons&quot;:[{&quot;src&quot;:&quot;data:image/svg+xml,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'&gt;&lt;rect fill='%231a6b3c' width='192' height='192'/&gt;&lt;text x='96' y='110' font-size='80' fill='%23f5c842' text-anchor='middle' font-family='Arial'&gt;🏸&lt;/text&gt;&lt;/svg&gt;&quot;,&quot;sizes&quot;:&quot;192x192&quot;,&quot;type&quot;:&quot;image/svg+xml&quot;,&quot;purpose&quot;:&quot;any&quot;}]}">
+<title>🏸 TBH Badminton Scheduler</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Space+Grotesk:wght@400;500;700&display=swap');
+
+  :root {
+    --court-green: #1a6b3c;
+    --court-light: #2d9e5e;
+    --shuttle-gold: #f5c842;
+    --shuttle-amber: #e8a020;
+    --bg-dark: #0f1a14;
+    --bg-card: #162215;
+    --bg-card2: #1c2b1e;
+    --text-primary: #e8f5ec;
+    --text-muted: #7aab87;
+    --rest-blue: #2563eb;
+    --rest-light: #3b82f6;
+    --border: #2a3d2e;
+    --accent: #f5c842;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg-dark);
+    color: var(--text-primary);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .header {
+    background: linear-gradient(135deg, #0f2a17 0%, #1a4a26 50%, #0f2a17 100%);
+    border-bottom: 2px solid var(--shuttle-gold);
+    padding: 24px 20px 20px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -40px; left: 50%; transform: translateX(-50%);
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(245,200,66,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .header h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(1.4rem, 4vw, 2rem);
+    font-weight: 700;
+    color: var(--shuttle-gold);
+    letter-spacing: -0.5px;
+  }
+  .header p {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    flex-shrink: 0;
+    padding: 14px 20px;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .tab-btn.active {
+    color: var(--shuttle-gold);
+    border-bottom-color: var(--shuttle-gold);
+  }
+  .tab-btn:hover:not(.active) { color: var(--text-primary); }
+
+  /* MAIN CONTAINER */
+  .container { max-width: 700px; margin: 0 auto; padding: 0 12px 40px; }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* PLAYER SETUP PANEL */
+  .setup-panel {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 20px;
+  }
+  .setup-panel h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1rem;
+    color: var(--shuttle-gold);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .player-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+  .player-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .player-num {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    width: 22px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .player-input {
+    flex: 1;
+    background: var(--bg-dark);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 9px 12px;
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .player-input:focus { border-color: var(--court-light); }
+  .player-input::placeholder { color: #4a6451; }
+
+  .btn-remove {
+    background: none;
+    border: 1px solid #3a2a2a;
+    border-radius: 6px;
+    color: #c84040;
+    padding: 6px 10px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: all 0.2s;
+  }
+  .btn-remove:hover { background: #3a1a1a; border-color: #c84040; }
+
+  .setup-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn {
+    padding: 10px 18px;
+    border-radius: 8px;
+    border: none;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-primary {
+    background: var(--shuttle-gold);
+    color: #1a1000;
+    flex: 1;
+    justify-content: center;
+  }
+  .btn-primary:hover { background: var(--shuttle-amber); }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-secondary {
+    background: var(--bg-card2);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+  }
+  .btn-secondary:hover { color: var(--text-primary); border-color: var(--text-muted); }
+  .btn-add {
+    background: none;
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+    color: var(--text-muted);
+    padding: 8px 14px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s;
+    margin-bottom: 14px;
+    width: 100%;
+  }
+  .btn-add:hover { border-color: var(--court-light); color: var(--court-light); }
+
+  .rounds-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .rounds-row label { font-size: 0.85rem; color: var(--text-muted); white-space: nowrap; }
+  .rounds-input {
+    background: var(--bg-dark);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 12px;
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    outline: none;
+    width: 80px;
+    text-align: center;
+  }
+  .rounds-input:focus { border-color: var(--court-light); }
+
+  .info-note {
+    background: rgba(37, 99, 235, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 0.8rem;
+    color: #93c5fd;
+    margin-bottom: 16px;
+  }
+
+  /* SCHEDULE VIEW */
+  .schedule-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 0 12px;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .schedule-header h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1rem;
+    color: var(--text-primary);
+  }
+  .copy-btn {
+    background: var(--bg-card2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-muted);
+    padding: 7px 14px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .copy-btn:hover { color: var(--shuttle-gold); border-color: var(--shuttle-gold); }
+
+  .round-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 10px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .round-card:hover { border-color: #3a5a3e; }
+  .round-card:not(.has-player) { opacity: 0.3; }
+  .round-card.has-player { border-color: var(--court-light); }
+  .round-header {
+    background: var(--bg-card2);
+    padding: 10px 16px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: var(--shuttle-gold);
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .round-header .round-num {
+    background: var(--shuttle-gold);
+    color: #1a1000;
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+  .court-row {
+    padding: 10px 16px;
+    border-bottom: 1px solid #1e2e21;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .court-row:last-child { border-bottom: none; }
+  .court-label {
+    font-size: 0.75rem;
+    color: var(--court-light);
+    font-weight: 600;
+    min-width: 60px;
+    flex-shrink: 0;
+  }
+  .match-teams {
+    font-size: 0.875rem;
+    color: var(--text-primary);
+    flex: 1;
+  }
+  .team { display: inline; }
+  .vs { color: var(--text-muted); font-size: 0.75rem; padding: 0 4px; }
+  .rest-row {
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(37, 99, 235, 0.06);
+  }
+  .rest-label {
+    font-size: 0.75rem;
+    color: var(--rest-light);
+    font-weight: 600;
+    min-width: 60px;
+    flex-shrink: 0;
+  }
+  .rest-names { font-size: 0.875rem; color: #93c5fd; }
+
+  /* PLAYER HIGHLIGHT */
+  .player-filter-bar {
+    margin-bottom: 12px;
+  }
+  .player-filter-bar label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    display: block;
+    margin-bottom: 6px;
+  }
+  .player-filter-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .pill {
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--bg-card2);
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: 'Inter', sans-serif;
+  }
+  .pill.active {
+    background: var(--court-green);
+    border-color: var(--court-light);
+    color: #fff;
+  }
+  .pill:hover:not(.active) { border-color: var(--court-light); color: var(--text-primary); }
+
+  /* STATS */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .stat-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+  }
+  .stat-card h3 {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 10px;
+  }
+  .stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0;
+    font-size: 0.82rem;
+    border-bottom: 1px solid #1e2e21;
+  }
+  .stat-row:last-child { border-bottom: none; }
+  .stat-name { color: var(--text-primary); }
+  .stat-val {
+    font-weight: 600;
+    color: var(--shuttle-gold);
+    font-variant-numeric: tabular-nums;
+  }
+  .stat-card.full { grid-column: 1/-1; }
+  .partner-table { width: 100%; border-collapse: collapse; font-size: 0.75rem; }
+  .partner-table th {
+    color: var(--text-muted);
+    font-weight: 500;
+    padding: 4px 6px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  .partner-table td { padding: 4px 6px; border-bottom: 1px solid #1c2a1f; }
+  .partner-table tr:last-child td { border-bottom: none; }
+  .badge {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+  }
+  .badge-green { background: #1a4a26; color: #4ade80; }
+  .badge-yellow { background: #3d3010; color: var(--shuttle-gold); }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-muted);
+  }
+  .empty-state .empty-icon { font-size: 3rem; margin-bottom: 12px; }
+  .empty-state p { font-size: 0.9rem; }
+
+  .generating {
+    text-align: center;
+    padding: 50px 20px;
+    color: var(--text-muted);
+  }
+  .spinner {
+    width: 36px; height: 36px;
+    border: 3px solid var(--border);
+    border-top-color: var(--shuttle-gold);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 16px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .toast {
+    position: fixed;
+    bottom: 24px; left: 50%; transform: translateX(-50%) translateY(60px);
+    background: var(--court-green);
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    opacity: 0;
+    transition: all 0.3s;
+    z-index: 999;
+    white-space: nowrap;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  @media (max-width: 480px) {
+    .stats-grid { grid-template-columns: 1fr; }
+    .stat-card.full { grid-column: 1; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🏸 TBH Badminton Scheduler</h1>
+  <p>Fair & Balanced Round-Robin</p>
+</div>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('setup')">⚙️ Players</button>
+  <button class="tab-btn" onclick="switchTab('schedule')" id="scheduleTabBtn">📋 Schedule</button>
+  <button class="tab-btn" onclick="switchTab('stats')" id="statsTabBtn">📊 Stats</button>
+</div>
+
+<div class="container">
+
+  <!-- SETUP TAB -->
+  <div class="tab-content active" id="tab-setup">
+    <div class="setup-panel">
+      <h2>👥 Today's Players</h2>
+      <div class="info-note" id="infoNote">
+        Add at least 4 players (best with 6+). All players must have a name.
+      </div>
+      <div class="player-list" id="playerList"></div>
+      <button class="btn-add" onclick="addPlayer()">+ Add player</button>
+      <div class="rounds-row">
+        <label>Courts:</label>
+        <input type="number" class="rounds-input" id="courtsInput" value="2" min="1" max="10" oninput="updateInfoNote()">
+        <label style="margin-left:12px">Rounds:</label>
+        <input type="number" class="rounds-input" id="roundsInput" value="24" min="1" max="99">
+        <span style="font-size:0.78rem;color:var(--text-muted)">(rec: 24)</span>
+      </div>
+      <div class="setup-actions">
+        <button class="btn btn-secondary" onclick="loadDefault()">↩ Clear to Empty</button>
+        <button class="btn btn-primary" id="generateBtn" onclick="generateSchedule()">🏸 Generate Schedule</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCHEDULE TAB -->
+  <div class="tab-content" id="tab-schedule">
+    <div id="scheduleOutput">
+      <div class="empty-state">
+        <div class="empty-icon">🏸</div>
+        <p>Generate a schedule first!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATS TAB -->
+  <div class="tab-content" id="tab-stats">
+    <div id="statsOutput">
+      <div class="empty-state">
+        <div class="empty-icon">📊</div>
+        <p>Generate a schedule to see stats.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<footer style="text-align:center;padding:24px 20px 32px;border-top:1px solid var(--border);margin-top:20px;">
+  <p style="font-size:0.78rem;color:#4a7a5a">🏸 TBH Badminton Scheduler &nbsp;·&nbsp; Made with ❤️ by Akash</p>
+</footer>
+
+<script>
+// ===================== STATE =====================
+let currentPlayers = [];
+let currentSchedule = [];
+let activeFilter = null;
+
+// Initialized empty slots (10 slots by default)
+const DEFAULT_PLAYERS = ["", "", "", "", "", "", "", "", "", ""];
+
+// ===================== PLAYER MANAGEMENT =====================
+function initPlayerList(players) {
+  const list = document.getElementById('playerList');
+  list.innerHTML = '';
+  players.forEach((p, i) => addPlayerRow(p, i));
+}
+
+function addPlayerRow(name='', index=null) {
+  const list = document.getElementById('playerList');
+  const row = document.createElement('div');
+  row.className = 'player-row';
+  const idx = index !== null ? index : list.children.length;
+  row.innerHTML = `
+    <span class="player-num">${idx+1}.</span>
+    <input class="player-input" placeholder="Player name" value="${name}" oninput="renumberPlayers()">
+    <button class="btn-remove" onclick="removePlayer(this)">✕</button>
+  `;
+  list.appendChild(row);
+}
+
+function addPlayer() {
+  const list = document.getElementById('playerList');
+  if (list.children.length >= 20) { showToast('Max 20 players'); return; }
+  addPlayerRow('', list.children.length);
+  const inputs = document.querySelectorAll('.player-input');
+  inputs[inputs.length-1].focus();
+}
+
+function removePlayer(btn) {
+  const list = document.getElementById('playerList');
+  if (list.children.length <= 4) { showToast('Need at least 4 players'); return; }
+  btn.closest('.player-row').remove();
+  renumberPlayers();
+}
+
+function renumberPlayers() {
+  document.querySelectorAll('.player-row').forEach((row, i) => {
+    row.querySelector('.player-num').textContent = (i+1) + '.';
+  });
+}
+
+function getPlayers() {
+  return Array.from(document.querySelectorAll('.player-input'))
+    .map(i => i.value.trim()).filter(v => v);
+}
+
+function loadDefault() {
+  initPlayerList(DEFAULT_PLAYERS);
+  document.getElementById('roundsInput').value = 24;
+  document.getElementById('courtsInput').value = 2;
+  updateInfoNote();
+}
+
+function updateInfoNote() {
+  const courts = parseInt(document.getElementById('courtsInput').value) || 2;
+  const playing = courts * 4;
+  const note = document.getElementById('infoNote');
+  note.textContent = `Need at least ${playing} players for ${courts} court${courts>1?'s':''}. Extra players rotate as rest. All players must have a name.`;
+}
+
+// ===================== SCHEDULE GENERATION =====================
+function pairKey(a, b) {
+  return [a,b].sort().join('|');
+}
+
+function generateSchedule() {
+  const players = getPlayers();
+  if (players.length < 4) { showToast('Need at least 4 players!'); return; }
+  if (new Set(players).size !== players.length) { showToast('Duplicate names detected!'); return; }
+
+  const rounds = parseInt(document.getElementById('roundsInput').value) || 24;
+  if (rounds < 1 || rounds > 99) { showToast('Rounds: 1–99 please'); return; }
+
+  const courts = parseInt(document.getElementById('courtsInput').value) || 2;
+  if (courts < 1 || courts > 10) { showToast('Courts: 1–10 please'); return; }
+
+  const minPlayers = courts * 4;
+  if (players.length < minPlayers) {
+    showToast(`Need at least ${minPlayers} players for ${courts} courts!`); return;
+  }
+
+  document.getElementById('scheduleOutput').innerHTML = `<div class="generating"><div class="spinner"></div><p>Generating fair schedule…</p></div>`;
+  document.getElementById('statsOutput').innerHTML = `<div class="generating"><div class="spinner"></div><p>Calculating…</p></div>`;
+
+  setTimeout(() => {
+    const schedule = computeSchedule(players, rounds, courts);
+    currentPlayers = players;
+    currentSchedule = schedule;
+    renderSchedule(schedule, players, courts);
+    renderStats(schedule, players);
+    switchTab('schedule');
+    showToast('Schedule ready! 🏸');
+  }, 50);
+}
+
+function computeSchedule(players, numRounds, numCourts) {
+  numCourts = numCourts || 2;
+  const n = players.length;
+  const playingPerRound = numCourts * 4;
+  const actualResting = Math.max(0, n - playingPerRound);
+
+  const partnerCount = {};
+  const opponentCount = {};
+  const restCount = {};
+  const gameCount = {};
+  const lastRest = {};
+  const lastPartner = {};
+
+  players.forEach(p => {
+    restCount[p] = 0;
+    gameCount[p] = 0;
+    lastRest[p] = -99;
+  });
+
+  function getPK(a, b) { return [a,b].sort().join('|'); }
+  function getPC(a, b) { return partnerCount[getPK(a,b)] || 0; }
+  function getOC(a, b) { return opponentCount[getPK(a,b)] || 0; }
+  function getLP(a, b) { return lastPartner[getPK(a,b)] || -99; }
+
+  styleOverride = document.createElement("style");
+  styleOverride.innerHTML = ".round-card { opacity: 1 !important; }";
+  document.head.appendChild(styleOverride);
+
+  function scoreRest(resting, rnd) {
+    let s = 0;
+    for (const p of resting) {
+      if (lastRest[p] === rnd-1) s += 200;
+      s += restCount[p] * 5;
+    }
+    return s;
+  }
+
+  function scoreMatch(t1, t2, rnd) {
+    let s = 0;
+    const pk1 = getPK(t1[0], t1[1]);
+    const pk2 = getPK(t2[0], t2[1]);
+    s += (partnerCount[pk1] || 0) * 15;
+    s += (partnerCount[pk2] || 0) * 15;
+    if ((lastPartner[pk1] || -99) === rnd-1) s += 80;
+    if ((lastPartner[pk2] || -99) === rnd-1) s += 80;
+    for (const a of t1) for (const b of t2) s += (opponentCount[getPK(a,b)] || 0) * 6;
+    return s;
+  }
+
+  function randomChoice(arr, weights) {
+    const total = weights.reduce((a,b) => a+b, 0);
+    let r = Math.random() * total;
+    for (let i = 0; i < arr.length; i++) {
+      r -= weights[i];
+      if (r <= 0) return arr[i];
+    }
+    return arr[arr.length-1];
+  }
+
+  function shuffle(arr) {
+    for (let i = arr.length-1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i+1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  function getTeamSplits(four) {
+    return [
+      [[four[0],four[1]], [four[2],four[3]]],
+      [[four[0],four[2]], [four[1],four[3]]],
+      [[four[0],four[3]], [four[1],four[2]]],
+    ];
+  }
+
+  const schedule = [];
+
+  for (let rnd = 0; rnd < numRounds; rnd++) {
+    let best = null;
+    let bestScore = Infinity;
+    const attempts = Math.min(300, 20 + players.length * 10);
+
+    for (let att = 0; att < attempts; att++) {
+      // Pick resting players
+      const restWeights = players.map(p =>
+        1 / (1 + (restCount[p] * 3) + (lastRest[p] === rnd-1 ? 50 : 0))
+      );
+
+      const numRest = actualResting;
+      const resting = [];
+      const available = [...players];
+      const availWeights = [...restWeights];
+
+      for (let r = 0; r < numRest; r++) {
+        const idx = available.indexOf(randomChoice(available, availWeights));
+        resting.push(available[idx]);
+        available.splice(idx, 1);
+        availWeights.splice(idx, 1);
+      }
+
+      const playing4 = shuffle([...available]);
+
+      if (playing4.length < numCourts * 4) {
+        const usable = Math.floor(playing4.length / 4);
+        if (usable < 1) continue;
+        let totalMs = 0;
+        const matches = [];
+        for (let c = 0; c < usable; c++) {
+          const cp = playing4.slice(c*4, c*4+4);
+          const splits = getTeamSplits(cp);
+          const best_ = splits.reduce((b, [t1,t2]) => {
+            const s = scoreMatch(t1,t2,rnd);
+            return s < b.s ? {s, t1, t2} : b;
+          }, {s:Infinity, t1:splits[0][0], t2:splits[0][1]});
+          matches.push({t1:best_.t1, t2:best_.t2});
+          totalMs += best_.s;
+        }
+        const rs = scoreRest(resting, rnd);
+        const ts = rs + totalMs;
+        if (ts < bestScore) { bestScore = ts; best = { resting, matches }; }
+        continue;
+      }
+
+      const courtGroups = [];
+      for (let c = 0; c < numCourts; c++) {
+        courtGroups.push(playing4.slice(c*4, c*4+4));
+      }
+
+      let totalMs = 0;
+      const matches = [];
+      for (const cp of courtGroups) {
+        const splits = getTeamSplits(cp);
+        let bs = Infinity, bt1, bt2;
+        for (const [t1,t2] of splits) {
+          const s = scoreMatch(t1,t2,rnd);
+          if (s < bs) { bs=s; bt1=t1; bt2=t2; }
+        }
+        matches.push({t1:bt1, t2:bt2});
+        totalMs += bs;
+      }
+
+      const rs = scoreRest(resting, rnd);
+      const ts = rs + totalMs;
+      if (ts < bestScore) { bestScore = ts; best = { resting, matches }; }
+    }
+
+    if (!best) continue;
+
+    for (const p of best.resting) {
+      restCount[p]++;
+      lastRest[p] = rnd;
+    }
+    for (const m of best.matches) {
+      const pk1 = getPK(m.t1[0], m.t1[1]);
+      const pk2 = getPK(m.t2[0], m.t2[1]);
+      partnerCount[pk1] = (partnerCount[pk1]||0)+1;
+      partnerCount[pk2] = (partnerCount[pk2]||0)+1;
+      lastPartner[pk1] = rnd;
+      lastPartner[pk2] = rnd;
+      [...m.t1,...m.t2].forEach(p => gameCount[p] = (gameCount[p]||0)+1);
+      for (const a of m.t1) for (const b of m.t2) {
+        const k = getPK(a,b);
+        opponentCount[k] = (opponentCount[k]||0)+1;
+      }
+    }
+    schedule.push(best);
+  }
+
+  schedule._stats = { partnerCount, opponentCount, restCount, gameCount };
+  return schedule;
+}
+
+// ===================== RENDER SCHEDULE =====================
+function renderSchedule(schedule, players, courts) {
+  courts = courts || 2;
+  const container = document.getElementById('scheduleOutput');
+  if (!schedule.length) { container.innerHTML = '<div class="empty-state"><div class="empty-icon">⚠️</div><p>Could not generate schedule.</p></div>'; return; }
+
+  let html = `
+    <div class="schedule-header">
+      <h2>📋 ${schedule.length} Rounds · ${players.length} Players · ${courts} Court${courts>1?'s':''}</h2>
+      <button class="copy-btn" onclick="copyWhatsApp()">📋 Copy for WhatsApp</button>
+    </div>
+    <div class="player-filter-bar">
+      <label>Highlight player:</label>
+      <div class="player-filter-pills">
+        <button class="pill active" onclick="setFilter(null, this)">All</button>
+        ${players.map(p => `<button class="pill" onclick="setFilter('${p}', this)">${p}</button>`).join('')}
+      </div>
+    </div>
+    <div id="roundsList">
+  `;
+
+  for (let i = 0; i < schedule.length; i++) {
+    const round = schedule[i];
+    const allPlayers = [...round.matches.flatMap(m => [...m.t1, ...m.t2])];
+    html += `<div class="round-card" data-players="${allPlayers.join(',')}">
+      <div class="round-header"><span class="round-num">${i+1}</span> Game ${i+1}</div>`;
+
+    round.matches.forEach((m, ci) => {
+      html += `<div class="court-row">
+        <span class="court-label">🏸 Court ${ci+1}</span>
+        <span class="match-teams">
+          <span class="team">${m.t1[0]} &amp; ${m.t1[1]}</span>
+          <span class="vs"> vs </span>
+          <span class="team">${m.t2[0]} &amp; ${m.t2[1]}</span>
+        </span>
+      </div>`;
+    });
+
+    html += `<div class="rest-row">
+      <span class="rest-label">😴 Rest</span>
+      <span class="rest-names">${round.resting.join(', ')}</span>
+    </div></div>`;
+  }
+
+  html += `</div>`;
+  container.innerHTML = html;
+}
+
+function setFilter(player, btn) {
+  activeFilter = player;
+  document.querySelectorAll('.player-filter-pills .pill').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+
+  const cards = document.querySelectorAll('.round-card');
+  cards.forEach(card => {
+    if (!player) {
+      card.style.opacity = '1';
+      card.style.borderColor = '';
+    } else {
+      const playersList = card.getAttribute('data-players').split(',');
+      const resting = card.querySelector('.rest-names')?.textContent || '';
+      const inMatch = playersList.includes(player);
+      const isResting = resting.includes(player);
+      if (inMatch) {
+        card.style.opacity = '1';
+        card.style.borderColor = 'var(--court-light)';
+      } else if (isResting) {
+        card.style.opacity = '1';
+        card.style.borderColor = 'rgba(59,130,246,0.5)';
+      } else {
+        card.style.opacity = '0.25';
+        card.style.borderColor = '';
+      }
+    }
+  });
+}
+
+// ===================== RENDER STATS =====================
+function renderStats(schedule, players) {
+  const stats = schedule._stats;
+  if (!stats) return;
+  const { partnerCount, opponentCount, restCount, gameCount } = stats;
+
+  const gameVals = players.map(p => gameCount[p] || 0);
+  const restVals = players.map(p => restCount[p] || 0);
+
+  const pcVals = Object.values(partnerCount);
+  const pcMin = Math.min(...pcVals);
+  const pcMax = Math.max(...pcVals);
+
+  const ocVals = Object.values(opponentCount);
+  const ocMin = Math.min(...ocVals);
+  const ocMax = Math.max(...ocVals);
+
+  let btr = 0;
+  const lr = {};
+  for (let i = 0; i < schedule.length; i++) {
+    for (const p of schedule[i].resting) {
+      if (lr[p] === i-1) btr++;
+      lr[p] = i;
+    }
+  }
+
+  let html = `<div style="padding-top:16px">`;
+
+  html += `<div class="stats-grid">
+    <div class="stat-card">
+      <h3>🎮 Games Played</h3>
+      ${players.map(p => `<div class="stat-row"><span class="stat-name">${p}</span><span class="stat-val">${gameCount[p]||0}</span></div>`).join('')}
+    </div>
+    <div class="stat-card">
+      <h3>😴 Rest Count</h3>
+      ${players.map(p => `<div class="stat-row"><span class="stat-name">${p}</span><span class="stat-val">${restCount[p]||0}</span></div>`).join('')}
+    </div>
+    <div class="stat-card full">
+      <h3>📈 Fairness Overview</h3>
+      <div class="stat-row"><span class="stat-name">Games range</span><span class="stat-val">${Math.min(...gameVals)} – ${Math.max(...gameVals)}</span></div>
+      <div class="stat-row"><span class="stat-name">Rests range</span><span class="stat-val">${Math.min(...restVals)} – ${Math.max(...restVals)}</span></div>
+      <div class="stat-row"><span class="stat-name">Partner freq range</span><span class="stat-val">${pcMin} – ${pcMax}</span></div>
+      <div class="stat-row"><span class="stat-name">Opponent freq range</span><span class="stat-val">${ocMin} – ${ocMax}</span></div>
+      <div class="stat-row"><span class="stat-name">Back-to-back rests</span><span class="stat-val" style="${btr===0?'color:#4ade80':'color:#f87171'}">${btr === 0 ? '✅ None' : '⚠️ ' + btr}</span></div>
+    </div>
+    <div class="stat-card full">
+      <h3>🤝 Top Partnerships</h3>
+      <table class="partner-table">
+        <thead><tr><th>Players</th><th>Times</th></tr></thead>
+        <tbody>
+        ${Object.entries(partnerCount).sort((a,b)=>b[1]-a[1]).slice(0,15).map(([pair,cnt]) => {
+          const cls = cnt <= 1 ? 'badge-green' : 'badge-yellow';
+          return `<tr><td>${pair.replace('|',' & ')}</td><td><span class="badge ${cls}">${cnt}×</span></td></tr>`;
+        }).join('')}
+        </tbody>
+      </table>
+    </div>
+  </div>`;
+
+  html += `</div>`;
+  document.getElementById('statsOutput').innerHTML = html;
+}
+
+// ===================== WHATSAPP COPY =====================
+function copyWhatsApp() {
+  if (!currentSchedule.length) return;
+  let text = `🏸 *BADMINTON SCHEDULE* 🏸\n${currentPlayers.length} players · ${currentSchedule.length} rounds\n\n`;
+  currentSchedule.forEach((round, i) => {
+    text += `*Game ${i+1}*\n`;
+    round.matches.forEach((m, ci) => {
+      text += `🏸 Court ${ci+1}: ${m.t1[0]} & ${m.t1[1]} vs ${m.t2[0]} & ${m.t2[1]}\n`;
+    });
+    text += `😴 Rest: ${round.resting.join(', ')}\n\n`;
+  });
+  navigator.clipboard.writeText(text).then(() => showToast('Copied for WhatsApp! 📋'));
+}
+
+// ===================== TABS =====================
+function switchTab(tab) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  const idx = ['setup','schedule','stats'].indexOf(tab);
+  document.querySelectorAll('.tab-btn')[idx].classList.add('active');
+}
+
+// ===================== TOAST =====================
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ===================== PWA SETUP =====================
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('data:application/javascript,self.addEventListener("install",e=>self.skipWaiting());self.addEventListener("activate",e=>e.waitUntil(clients.claim()));self.addEventListener("fetch",e=>{if(e.request.method==="GET"){e.respondWith(fetch(e.request).catch(()=>caches.match(e.request)))}})');
+  });
+}
+
+// ===================== INIT =====================
+loadDefault();
+updateInfoNote();
+</script>
+</body>
+</html>
