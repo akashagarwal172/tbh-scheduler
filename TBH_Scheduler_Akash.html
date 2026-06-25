@@ -158,6 +158,30 @@
   }
   .btn-remove:hover { background: #3a1a1a; border-color: #c84040; }
 
+  /* BULK PASTE STYLES */
+  .bulk-container {
+    background: var(--bg-dark);
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+    padding: 14px;
+    margin-bottom: 20px;
+  }
+  .bulk-textarea {
+    width: 100%;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-primary);
+    padding: 10px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    resize: vertical;
+    outline: none;
+    margin-top: 6px;
+  }
+  .bulk-textarea:focus { border-color: var(--court-light); }
+  .bulk-textarea::placeholder { color: #4a6451; }
+
   .setup-actions { display: flex; gap: 10px; flex-wrap: wrap; }
   .btn {
     padding: 10px 18px;
@@ -484,7 +508,6 @@
 
 <div class="container">
 
-  <!-- SETUP TAB -->
   <div class="tab-content active" id="tab-setup">
     <div class="setup-panel">
       <h2>👥 Today's Players</h2>
@@ -492,7 +515,18 @@
         Add at least 4 players (best with 6+). All players must have a name.
       </div>
       <div class="player-list" id="playerList"></div>
-      <button class="btn-add" onclick="addPlayer()">+ Add player</button>
+      <button class="btn-add" onclick="addPlayer()">+ Add individual player</button>
+
+      <div class="bulk-container">
+        <label for="bulkInput" style="font-size: 0.82rem; font-weight: 600; color: var(--shuttle-gold); display: block;">
+          📋 Bulk Paste List (WhatsApp, Line, etc.)
+        </label>
+        <textarea id="bulkInput" class="bulk-textarea" rows="4" placeholder="Paste list directly here...&#10;1. Player 1 &#10;2. Player 2 &#10;3. Player 3"></textarea>
+        <button class="btn btn-secondary" onclick="processBulkPaste()" style="margin-top: 8px; width: 100%; justify-content: center; padding: 8px; font-size: 0.8rem; background: var(--bg-card);">
+          ⚡ Parse and Add Players
+        </button>
+      </div>
+
       <div class="rounds-row">
         <label>Courts:</label>
         <input type="number" class="rounds-input" id="courtsInput" value="2" min="1" max="10" oninput="updateInfoNote()">
@@ -507,7 +541,6 @@
     </div>
   </div>
 
-  <!-- SCHEDULE TAB -->
   <div class="tab-content" id="tab-schedule">
     <div id="scheduleOutput">
       <div class="empty-state">
@@ -517,7 +550,6 @@
     </div>
   </div>
 
-  <!-- STATS TAB -->
   <div class="tab-content" id="tab-stats">
     <div id="statsOutput">
       <div class="empty-state">
@@ -590,10 +622,86 @@ function getPlayers() {
     .map(i => i.value.trim()).filter(v => v);
 }
 
+// ===================== BULK PASTE PROCESSING =====================
+function processBulkPaste() {
+  const textInput = document.getElementById('bulkInput').value;
+  if (!textInput.trim()) {
+    showToast("Paste a list of names first!");
+    return;
+  }
+
+  // Split lines
+  const lines = textInput.split(/\r?\n/);
+  const parsedNames = [];
+
+  lines.forEach(line => {
+    // 1. Strip hidden WhatsApp markup fields/zero-width whitespace artifacts
+    let cleanLine = line.replace(/[\u200B-\u200D\uFEFF]/g, '');
+    // 2. Clear out standard list divider and layout borders
+    cleanLine = cleanLine.replace(/[—─\-_+•*~]/g, '');
+    // 3. Match and drop list index identifiers (e.g., "1.", "2 )", "10-")
+    cleanLine = cleanLine.replace(/^\s*\d+[\s.)-]*\s*/, '');
+    // 4. Final text whitespace optimization
+    cleanLine = cleanLine.trim();
+
+    if (cleanLine.length > 0) {
+      parsedNames.push(cleanLine);
+    }
+  });
+
+  if (parsedNames.length === 0) {
+    showToast("No readable names found.");
+    return;
+  }
+
+  // Collect any manually typed names currently sitting in the configuration inputs
+  const explicitInputs = Array.from(document.querySelectorAll('.player-input'))
+    .map(i => i.value.trim())
+    .filter(name => name !== "");
+
+  // Prevent UI limits from going over 20 players total
+  let addedCount = 0;
+  const mergedCollection = [...explicitInputs];
+
+  parsedNames.forEach(name => {
+    if (mergedCollection.length < 20 && !mergedCollection.includes(name)) {
+      mergedCollection.push(name);
+      addedCount++;
+    }
+  });
+
+  if (addedCount === 0) {
+    showToast("Players already added or limit (20) reached!");
+    return;
+  }
+
+  // Hydrate empty visual blocks or add completely fresh rows to match updated array size
+  const listEl = document.getElementById('playerList');
+  const inputRowElements = listEl.querySelectorAll('.player-input');
+
+  // Fill in active placeholders first
+  let targetIndex = 0;
+  for (let i = 0; i < inputRowElements.length && targetIndex < mergedCollection.length; i++) {
+    inputRowElements[i].value = mergedCollection[targetIndex];
+    targetIndex++;
+  }
+
+  // Append new rows if the combined total exceeds current DOM rows
+  while (targetIndex < mergedCollection.length && listEl.children.length < 20) {
+    addPlayerRow(mergedCollection[targetIndex], listEl.children.length);
+    targetIndex++;
+  }
+
+  renumberPlayers();
+  document.getElementById('bulkInput').value = ''; // Clean box container
+  showToast(`Added ${addedCount} players successfully!`);
+}
+
 function loadDefault() {
   initPlayerList(DEFAULT_PLAYERS);
   document.getElementById('roundsInput').value = 24;
   document.getElementById('courtsInput').value = 2;
+  document.getElementById('bulkInput').value = '';
   updateInfoNote();
 }
 
@@ -722,7 +830,6 @@ function computeSchedule(players, numRounds, numCourts) {
     const attempts = Math.min(300, 20 + players.length * 10);
 
     for (let att = 0; att < attempts; att++) {
-      // Pick resting players
       const restWeights = players.map(p =>
         1 / (1 + (restCount[p] * 3) + (lastRest[p] === rnd-1 ? 50 : 0))
       );
