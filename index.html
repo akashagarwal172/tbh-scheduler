@@ -187,24 +187,36 @@
     padding: 9px 12px;
     color: var(--text-primary);
     font-family: 'Inter', sans-serif;
-    font-size: 0.9rem;
+    font-size: 16px; /* Prevents auto-zoom on mobile Chrome/Safari */
     outline: none;
     transition: border-color 0.2s;
+    min-height: 42px; /* Touch-friendly height */
   }
   .player-input:focus { border-color: var(--court-light); }
   .player-input::placeholder { color: #4a6451; }
 
   .btn-remove {
-    background: none;
-    border: 1px solid #3a2a2a;
-    border-radius: 6px;
-    color: #c84040;
-    padding: 6px 10px;
+    background: rgba(239, 68, 68, 0.08);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-radius: 50%;
+    color: #f87171;
+    width: 42px; /* Optimal minimum 42-44px touch target */
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
-    font-size: 0.8rem;
+    font-size: 1.1rem;
+    line-height: 1;
     transition: all 0.2s;
+    flex-shrink: 0;
   }
-  .btn-remove:hover { background: #3a1a1a; border-color: #c84040; }
+  .btn-remove:hover { 
+    background: #ef4444; 
+    border-color: #ef4444; 
+    color: #ffffff; 
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
+  }
 
   .setup-actions { display: flex; gap: 10px; flex-wrap: wrap; }
   .btn {
@@ -263,10 +275,11 @@
     padding: 8px 12px;
     color: var(--text-primary);
     font-family: 'Inter', sans-serif;
-    font-size: 0.9rem;
+    font-size: 16px; /* Prevents auto-zoom on mobile Chrome/Safari */
     outline: none;
     width: 80px;
     text-align: center;
+    min-height: 40px;
   }
   .rounds-input:focus { border-color: var(--court-light); }
 
@@ -595,12 +608,13 @@
     padding: 9px 8px;
     color: var(--text-primary);
     font-family: 'Inter', sans-serif;
-    font-size: 0.85rem;
+    font-size: 16px; /* Prevents auto-zoom on mobile Chrome/Safari */
     outline: none;
     transition: all 0.2s;
     width: 125px;
     cursor: pointer;
     flex-shrink: 0;
+    min-height: 42px; /* Touch-friendly height */
   }
   .player-skill:focus { border-color: var(--court-light); }
 
@@ -677,6 +691,49 @@
   @media (max-width: 480px) {
     .stats-grid { grid-template-columns: 1fr; }
     .stat-card.full { grid-column: 1; }
+
+    /* Optimize Court Cards and Visual Layout on Mobile Chrome */
+    .court-row {
+      grid-template-columns: 1fr;
+      gap: 6px;
+      padding: 10px 12px;
+    }
+    .court-label {
+      width: 100%;
+      text-align: center;
+      margin-bottom: 2px;
+      padding: 3px 6px;
+      font-size: 0.65rem;
+    }
+    .court-visual-card {
+      padding: 8px 12px;
+      min-height: 48px;
+    }
+    .court-player {
+      font-size: 0.8rem;
+    }
+    .vs-badge-container {
+      width: 24px;
+      height: 24px;
+    }
+    .vs-badge-text {
+      font-size: 0.6rem;
+    }
+
+    /* Padding & touch optimized spacing inside setup cards */
+    .setup-panel {
+      padding: 14px;
+    }
+    .btn {
+      padding: 12px 14px; /* Slightly taller for perfect touch targets */
+    }
+    
+    /* Center toast on small screens cleanly */
+    .toast {
+      font-size: 0.8rem;
+      padding: 8px 16px;
+      bottom: 16px;
+    }
   }
 
   /* Show skill selector dropdown only when in Skill Balanced mode */
@@ -722,7 +779,7 @@
 Example:
 1. Akash (Intermediate)
 2. John (Beginner)
-3. Sarah (Advanced)" style="width:100%;min-height:90px;background:var(--bg-dark);border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--text-primary);font-family:'Inter',sans-serif;font-size:0.85rem;resize:vertical;outline:none;"></textarea>
+3. Sarah (Advanced)" style="width:100%;min-height:90px;background:var(--bg-dark);border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--text-primary);font-family:'Inter',sans-serif;font-size:16px;resize:vertical;outline:none;"></textarea>
         <div style="font-size:0.72rem;color:var(--text-muted);margin-top:6px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
           <span>💡 Auto-detects names & skill levels!</span>
           <button class="btn btn-primary" onclick="processPaste()" style="padding:6px 12px;font-size:0.78rem;border-radius:6px;cursor:pointer;border:none;margin:0;">✅ Extract Players</button>
@@ -1123,17 +1180,31 @@ function renumberPlayers() {
     const numEl = row.querySelector('.player-num');
     const selectEl = row.querySelector('.player-skill');
     if (isFixed) {
-      const teamNum = Math.floor(idx / 2) + 1;
-      numEl.textContent = `Team ${teamNum}`;
-      numEl.style.width = '55px';
+      const teamIdx = Math.floor(idx / 2);
+      let teamLetter = '';
+      let temp = teamIdx;
+      while (temp >= 0) {
+        teamLetter = String.fromCharCode(65 + (temp % 26)) + teamLetter;
+        temp = Math.floor(temp / 26) - 1;
+      }
+      
+      numEl.style.width = '65px';
       
       if (idx % 2 === 0) {
+        numEl.textContent = `Team ${teamLetter}:`;
         numEl.style.color = 'var(--shuttle-gold)';
-        row.style.marginTop = "10px";
-        row.style.borderTop = "1px solid var(--border)";
-        row.style.paddingTop = "10px";
+        numEl.style.fontWeight = '700';
+        numEl.style.fontSize = '0.8rem';
+        numEl.style.textAlign = 'right';
+        row.style.marginTop = "16px";
+        row.style.borderTop = "1px dashed var(--border)";
+        row.style.paddingTop = "14px";
       } else {
-        numEl.style.color = 'var(--court-light)';
+        numEl.textContent = ``;
+        numEl.style.color = 'var(--text-muted)';
+        numEl.style.fontWeight = '500';
+        numEl.style.fontSize = '1.1rem';
+        numEl.style.textAlign = 'center';
         row.style.marginTop = "0";
         row.style.borderTop = "none";
         row.style.paddingTop = "0";
@@ -1142,6 +1213,9 @@ function renumberPlayers() {
       numEl.textContent = (idx + 1) + '.';
       numEl.style.width = '22px';
       numEl.style.color = 'var(--text-muted)';
+      numEl.style.fontWeight = '600';
+      numEl.style.fontSize = '0.75rem';
+      numEl.style.textAlign = 'right';
       row.style.marginTop = "0";
       row.style.borderTop = "none";
       row.style.paddingTop = "0";
@@ -1300,7 +1374,7 @@ function generateSchedule() {
       let bestRoundCost = Infinity;
 
       // Sample random configurations to find the best balance of skills and partner variety
-      const iterations = (currentMode === 'balanced') ? 2000 : 1000;
+      const iterations = (currentMode === 'balanced') ? 5000 : 1000;
       for (let iter = 0; iter < iterations; iter++) {
         // Shuffle the playing players
         const shuffled = [...available].sort(() => Math.random() - 0.5);
@@ -1338,6 +1412,12 @@ function generateSchedule() {
               const t2Skill = skill2 + skill3;
               const skillDiff = Math.abs(t1Skill - t2Skill);
               cost += skillDiff * 2500; // heavy scale to prioritize skill balance
+
+              // ALSO penalize wide skill range on the same court (force homogeneous courts when possible)
+              const maxS = Math.max(skill0, skill1, skill2, skill3);
+              const minS = Math.min(skill0, skill1, skill2, skill3);
+              const courtSpread = maxS - minS;
+              cost += courtSpread * 1500; // penalize wide skill range on the same court
             }
 
             // b) Partnership frequency cost
@@ -1593,6 +1673,50 @@ function renderStats() {
   const restSpread = maxRests - minRests;
   const isPerfectRestBalance = restSpread <= 1;
 
+  let skillMetricsCardHtml = '';
+  if (currentMode === 'balanced') {
+    const skillScores = {
+      'Beginner': 1,
+      'Intermediate': 2,
+      'Advanced': 3
+    };
+    let totalSkillDiff = 0;
+    let totalCourtSpread = 0;
+    let matchCount = 0;
+    
+    scheduleData.forEach(r => {
+      r.matches.forEach(m => {
+        const s0 = skillScores[playerSkills[m.t1[0]]] || 2;
+        const s1 = skillScores[playerSkills[m.t1[1]]] || 2;
+        const s2 = skillScores[playerSkills[m.t2[0]]] || 2;
+        const s3 = skillScores[playerSkills[m.t2[1]]] || 2;
+        
+        const t1Skill = s0 + s1;
+        const t2Skill = s2 + s3;
+        totalSkillDiff += Math.abs(t1Skill - t2Skill);
+        
+        const maxS = Math.max(s0, s1, s2, s3);
+        const minS = Math.min(s0, s1, s2, s3);
+        totalCourtSpread += (maxS - minS);
+        
+        matchCount++;
+      });
+    });
+    
+    const avgSkillDiff = matchCount > 0 ? (totalSkillDiff / matchCount) : 0;
+    const avgCourtSpread = matchCount > 0 ? (totalCourtSpread / matchCount) : 0;
+    const qualityScore = Math.max(0, Math.min(100, Math.round(100 - (avgSkillDiff * 15) - (avgCourtSpread * 20))));
+    
+    skillMetricsCardHtml = `
+      <div class="stat-card" style="padding: 12px; text-align: center;">
+        <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">Skill Balance</div>
+        <div style="margin-top: 2px;">
+          <span class="badge ${qualityScore >= 85 ? 'badge-green' : 'badge-yellow'}" style="font-size: 0.75rem;" title="Avg Team Diff: ${avgSkillDiff.toFixed(2)}, Avg Court Spread: ${avgCourtSpread.toFixed(2)}">${qualityScore}% Quality</span>
+        </div>
+      </div>
+    `;
+  }
+
   // Render top overview cards
   let summaryHtml = `
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 16px;">
@@ -1616,6 +1740,7 @@ function renderStats() {
             `<span class="badge badge-yellow" style="font-size: 0.75rem;">Fair (Spread: ${restSpread})</span>`}
         </div>
       </div>
+      ${skillMetricsCardHtml}
     </div>
   `;
 
