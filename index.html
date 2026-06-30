@@ -524,11 +524,25 @@
     gap: 10px;
     margin-top: 16px;
   }
+  .stats-overview-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  @media (min-width: 600px) {
+    .stats-overview-grid {
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    }
+  }
   .stat-card {
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: 10px;
     padding: 14px;
+    min-width: 0;
+    overflow: hidden;
+    box-sizing: border-box;
   }
   .stat-card h3 {
     font-size: 0.75rem;
@@ -758,6 +772,17 @@
       font-size: 0.8rem;
       padding: 8px 16px;
       bottom: 16px;
+    }
+
+    /* Mobile-optimized stats cards and partner table */
+    .stat-card {
+      padding: 10px !important;
+    }
+    .partner-table {
+      font-size: 0.68rem !important;
+    }
+    .partner-table th, .partner-table td {
+      padding: 6px 4px !important;
     }
   }
 
@@ -1744,7 +1769,7 @@ function renderStats() {
 
   // Render top overview cards
   let summaryHtml = `
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 16px;">
+    <div class="stats-overview-grid">
       <div class="stat-card" style="padding: 12px; text-align: center;">
         <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">Total Matches</div>
         <div style="font-size: 1.4rem; font-weight: 700; color: var(--shuttle-gold);">${totalMatches}</div>
