@@ -30,85 +30,118 @@
   body {
     font-family: 'Inter', sans-serif;
     background: var(--bg-dark);
+    /* Gorgeous subtle court boundary lines drawn in the background */
+    background-image: 
+      radial-gradient(circle at 50% 120px, rgba(45, 158, 94, 0.08) 0%, transparent 60%),
+      linear-gradient(rgba(45, 158, 94, 0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(45, 158, 94, 0.02) 1px, transparent 1px);
+    background-size: 100% 100%, 40px 40px, 40px 40px;
     color: var(--text-primary);
     min-height: 100vh;
   }
 
   /* HEADER */
   .header {
-    background: linear-gradient(135deg, #0f2a17 0%, #1a4a26 50%, #0f2a17 100%);
+    background: linear-gradient(135deg, #09170e 0%, #13381d 50%, #09170e 100%);
     border-bottom: 2px solid var(--shuttle-gold);
-    padding: 24px 20px 20px;
+    padding: 28px 20px 24px;
     text-align: center;
     position: relative;
     overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
   }
   .header::before {
     content: '';
     position: absolute;
     top: -40px; left: 50%; transform: translateX(-50%);
     width: 300px; height: 300px;
-    background: radial-gradient(circle, rgba(245,200,66,0.08) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(245,200,66,0.1) 0%, transparent 70%);
     pointer-events: none;
   }
   .header-logo-container {
     display: flex;
     justify-content: center;
     margin-bottom: 12px;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
   }
   .header-logo {
     height: 90px;
     width: 90px;
     border-radius: 50%;
     border: 2px solid var(--shuttle-gold);
-    box-shadow: 0 0 15px rgba(245,200,66,0.4);
+    box-shadow: 0 0 20px rgba(245,200,66,0.3);
     background: #0f2a17;
   }
   .header h1 {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: clamp(1.4rem, 4vw, 2rem);
+    font-size: clamp(1.5rem, 4.5vw, 2.2rem);
     font-weight: 700;
     color: var(--shuttle-gold);
     letter-spacing: -0.5px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
   }
   .header p {
     font-size: 0.85rem;
     color: var(--text-muted);
     margin-top: 4px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    font-weight: 600;
   }
 
-  /* TABS */
+  /* PREMIUM TABS SEGMENTED CONTROL */
+  .tabs-container {
+    max-width: 700px;
+    margin: 24px auto 0;
+    padding: 0 16px;
+  }
   .tabs {
     display: flex;
     background: var(--bg-card);
-    border-bottom: 1px solid var(--border);
+    border: 1px solid var(--border);
+    border-radius: 9999px; /* Rounded pill style */
+    padding: 4px;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255,255,255,0.05);
   }
   .tabs::-webkit-scrollbar { display: none; }
   .tab-btn {
-    flex-shrink: 0;
-    padding: 14px 20px;
+    flex: 1;
+    min-width: 100px;
+    text-align: center;
+    padding: 10px 16px;
     background: none;
     border: none;
     color: var(--text-muted);
-    font-family: 'Inter', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
     font-size: 0.85rem;
-    font-weight: 500;
+    font-weight: 700;
     cursor: pointer;
-    border-bottom: 2px solid transparent;
-    transition: all 0.2s;
+    border-radius: 9999px;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
   }
   .tab-btn.active {
+    background: linear-gradient(135deg, var(--court-green) 0%, #144726 100%);
     color: var(--shuttle-gold);
-    border-bottom-color: var(--shuttle-gold);
+    box-shadow: 0 4px 12px rgba(26, 107, 60, 0.5);
+    border: 1.5px solid rgba(245, 200, 66, 0.35);
   }
-  .tab-btn:hover:not(.active) { color: var(--text-primary); }
+  .tab-btn:hover:not(.active) {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.03);
+  }
 
   /* MAIN CONTAINER */
-  .container { max-width: 700px; margin: 0 auto; padding: 0 12px 40px; }
+  .container { max-width: 700px; margin: 0 auto; padding: 0 16px 40px; }
 
   .tab-content { display: none; }
   .tab-content.active { display: block; }
@@ -280,75 +313,163 @@
   .round-card {
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 12px;
-    margin-bottom: 10px;
+    border-radius: 16px;
+    margin-bottom: 16px;
     overflow: hidden;
-    transition: border-color 0.2s, opacity 0.2s;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
   }
-  .round-card:hover { border-color: #3a5a3e; }
-  .round-card:not(.has-player) { opacity: 0.3; }
-  .round-card.has-player { border-color: var(--court-light); }
+  .round-card:hover { 
+    border-color: rgba(45, 158, 94, 0.4);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+  }
+  #schedule-output.filter-active .round-card:not(.has-player) { opacity: 0.25; filter: grayscale(50%); }
+  .round-card.has-player { 
+    border-color: var(--court-light); 
+    box-shadow: 0 0 16px rgba(45, 158, 94, 0.25);
+    transform: scale(1.01);
+  }
   .round-header {
-    background: var(--bg-card2);
-    padding: 10px 16px;
+    background: linear-gradient(90deg, var(--bg-card2) 0%, rgba(22, 34, 21, 0.8) 100%);
+    padding: 12px 18px;
     font-weight: 700;
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     color: var(--shuttle-gold);
     letter-spacing: 0.5px;
     border-bottom: 1px solid var(--border);
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
+    font-family: 'Space Grotesk', sans-serif;
+    text-transform: uppercase;
   }
   .round-header .round-num {
     background: var(--shuttle-gold);
     color: #1a1000;
-    border-radius: 50%;
-    width: 22px;
-    height: 22px;
+    border-radius: 6px;
+    width: 24px;
+    height: 24px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.75rem;
-    font-weight: 700;
+    font-size: 0.78rem;
+    font-weight: 800;
   }
   .court-row {
-    padding: 10px 16px;
-    border-bottom: 1px solid #1e2e21;
-    display: flex;
+    padding: 14px 18px;
+    border-bottom: 1px solid #1c2a1e;
+    display: grid;
+    grid-template-columns: 80px 1fr;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
   }
   .court-row:last-child { border-bottom: none; }
   .court-label {
-    font-size: 0.75rem;
-    color: var(--court-light);
-    font-weight: 600;
-    min-width: 60px;
-    flex-shrink: 0;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.7rem;
+    color: var(--shuttle-gold);
+    background: rgba(245, 200, 66, 0.08);
+    border: 1px solid rgba(245, 200, 66, 0.15);
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-align: center;
+    width: fit-content;
   }
-  .match-teams {
-    font-size: 0.875rem;
-    color: var(--text-primary);
-    flex: 1;
-  }
-  .team { display: inline; }
-  .vs { color: var(--text-muted); font-size: 0.75rem; padding: 0 4px; }
-  .rest-row {
-    padding: 8px 16px;
+  .court-visual-card {
+    background: linear-gradient(135deg, #0a1f11 0%, #112d19 100%);
+    border: 1px solid rgba(45, 158, 94, 0.25);
+    border-radius: 10px;
+    padding: 10px 16px;
+    position: relative;
+    overflow: hidden;
     display: flex;
     align-items: center;
-    gap: 10px;
-    background: rgba(37, 99, 235, 0.06);
+    justify-content: space-between;
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.5);
+    min-height: 56px;
+  }
+  /* Center net line */
+  .court-visual-card::after {
+    content: '';
+    position: absolute;
+    top: 0; bottom: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.18),
+      rgba(255, 255, 255, 0.18) 4px,
+      transparent 4px,
+      transparent 8px
+    );
+    z-index: 1;
+  }
+  .team-side {
+    width: 44%;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    z-index: 2;
+  }
+  .team-side.left {
+    text-align: right;
+    padding-right: 8px;
+  }
+  .team-side.right {
+    text-align: left;
+    padding-left: 8px;
+  }
+  .court-player {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+  .vs-badge-container {
+    position: relative;
+    z-index: 3;
+    background: #060d09;
+    border: 1.5px solid var(--shuttle-gold);
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.6);
+  }
+  .vs-badge-text {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: var(--shuttle-gold);
+  }
+  .rest-row {
+    padding: 10px 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(37, 99, 235, 0.08);
+    border-top: 1px dashed rgba(59, 130, 246, 0.2);
   }
   .rest-label {
+    font-family: 'Space Grotesk', sans-serif;
     font-size: 0.75rem;
-    color: var(--rest-light);
-    font-weight: 600;
-    min-width: 60px;
-    flex-shrink: 0;
+    color: #93c5fd;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: rgba(37, 99, 235, 0.15);
+    padding: 2px 8px;
+    border-radius: 4px;
   }
-  .rest-names { font-size: 0.875rem; color: #93c5fd; }
+  .rest-names { font-size: 0.82rem; color: #93c5fd; font-weight: 500; }
 
   /* PLAYER HIGHLIGHT */
   .player-filter-bar {
@@ -420,6 +541,28 @@
   }
   .stat-card.full { grid-column: 1/-1; }
 
+  /* PARTNER TABLE & BADGES */
+  .partner-table { width: 100%; border-collapse: collapse; font-size: 0.75rem; margin-top: 8px; }
+  .partner-table th {
+    color: var(--text-muted);
+    font-weight: 500;
+    padding: 6px 8px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  .partner-table td { padding: 8px 8px; border-bottom: 1px solid #1c2a1f; color: var(--text-primary); }
+  .partner-table tr:last-child td { border-bottom: none; }
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .badge-green { background: #1a4a26; color: #4ade80; }
+  .badge-yellow { background: #3d3010; color: var(--shuttle-gold); }
+
   .empty-state {
     text-align: center;
     padding: 60px 20px;
@@ -444,9 +587,101 @@
   }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
+  /* PLAYER SKILL DROP-DOWN */
+  .player-skill {
+    background: var(--bg-dark);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 9px 8px;
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    outline: none;
+    transition: all 0.2s;
+    width: 125px;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .player-skill:focus { border-color: var(--court-light); }
+
+  .badge-blue { background: rgba(37, 99, 235, 0.2); color: #93c5fd; }
+  .badge-red { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+
+  /* MODE SELECTOR */
+  .mode-selector-group {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    width: 100%;
+  }
+  @media (max-width: 520px) {
+    .mode-selector-group {
+      grid-template-columns: 1fr;
+    }
+  }
+  .mode-btn {
+    background: var(--bg-dark);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 10px;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.25s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-align: left;
+    font-family: 'Inter', sans-serif;
+    width: 100%;
+  }
+  .mode-btn:hover {
+    border-color: var(--court-light);
+    color: var(--text-primary);
+  }
+  .mode-btn.active {
+    background: var(--bg-card2);
+    border-color: var(--shuttle-gold);
+    color: var(--text-primary);
+    box-shadow: 0 0 12px rgba(245, 200, 66, 0.1);
+  }
+  .mode-icon {
+    font-size: 1.4rem;
+    flex-shrink: 0;
+  }
+  .mode-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .mode-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+  .mode-desc {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .mode-btn.active .mode-title {
+    color: var(--shuttle-gold);
+  }
+  .mode-btn.active .mode-desc {
+    color: var(--text-primary);
+    opacity: 0.8;
+  }
+
   @media (max-width: 480px) {
     .stats-grid { grid-template-columns: 1fr; }
     .stat-card.full { grid-column: 1; }
+  }
+
+  /* Show skill selector dropdown only when in Skill Balanced mode */
+  .player-list:not(.mode-balanced) .player-skill {
+    display: none !important;
   }
 </style>
 </head>
@@ -460,10 +695,12 @@
   <p>Tokyo Black Hawks Round-Robin Generator</p>
 </div>
 
-<div class="tabs">
-  <button class="tab-btn active" onclick="switchTab('setup')">⚙️ Players</button>
-  <button class="tab-btn" onclick="switchTab('schedule')">📋 Schedule</button>
-  <button class="tab-btn" onclick="switchTab('stats')">📊 Stats</button>
+<div class="tabs-container">
+  <div class="tabs">
+    <button class="tab-btn active" id="tab-btn-setup" onclick="switchTab('setup')">👥 Players</button>
+    <button class="tab-btn" id="tab-btn-schedule" onclick="switchTab('schedule')">🏸 Schedule</button>
+    <button class="tab-btn" id="tab-btn-stats" onclick="switchTab('stats')">📊 Stats</button>
+  </div>
 </div>
 
 <div class="container">
@@ -473,30 +710,86 @@
     <div class="setup-panel">
       <h2>👥 Today's Players</h2>
       <div class="info-note" id="infoNote">
-        Add at least 4 players (best with 6+). All players must have a name.
+        Add at least 4 players (best with 6+).
       </div>
       
-      <div style="margin-bottom:14px;">
-        <button class="btn-secondary" onclick="togglePasteMode()" style="width:100%;padding:10px;font-size:0.85rem;">📋 Paste from WhatsApp</button>
-        <div id="pasteArea" style="display:none;margin-top:10px;">
-          <textarea id="pasteInput" placeholder="Paste player list here...
-
+      <!-- SMART PASTE AREA (ALWAYS VISIBLE) -->
+      <div class="paste-card" style="background: rgba(45, 158, 94, 0.04); border: 1px dashed rgba(245, 200, 66, 0.2); border-radius: 10px; padding: 14px; margin-bottom: 16px;">
+        <label style="font-size: 0.85rem; font-weight: 600; color: var(--shuttle-gold); display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
+          📋 Paste List of Players
+        </label>
+        <textarea id="pasteInput" placeholder="Paste players list here from WhatsApp, Telegram, or any text...
 Example:
-1. Player 1
-2. Player 2
-3. Player 3
-4. Player 4" style="width:100%;min-height:120px;background:var(--bg-dark);border:1px solid var(--border);border-radius:8px;padding:12px;color:var(--text-primary);font-family:'Inter',sans-serif;font-size:0.85rem;resize:vertical;"></textarea>
-          <button class="btn-primary" onclick="processPaste()" style="margin-top:8px;width:100%;">✅ Extract Players</button>
+1. Akash (Intermediate)
+2. John (Beginner)
+3. Sarah (Advanced)" style="width:100%;min-height:90px;background:var(--bg-dark);border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--text-primary);font-family:'Inter',sans-serif;font-size:0.85rem;resize:vertical;outline:none;"></textarea>
+        <div style="font-size:0.72rem;color:var(--text-muted);margin-top:6px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+          <span>💡 Auto-detects names & skill levels!</span>
+          <button class="btn btn-primary" onclick="processPaste()" style="padding:6px 12px;font-size:0.78rem;border-radius:6px;cursor:pointer;border:none;margin:0;">✅ Extract Players</button>
         </div>
       </div>
       
       <div id="player-inputs" class="player-list">
-        <div class="player-row"><div class="player-num">1.</div><input type="text" class="player-input" placeholder="Player Name"><button class="btn-remove" onclick="removePlayer(this)">✕</button></div>
-        <div class="player-row"><div class="player-num">2.</div><input type="text" class="player-input" placeholder="Player Name"><button class="btn-remove" onclick="removePlayer(this)">✕</button></div>
-        <div class="player-row"><div class="player-num">3.</div><input type="text" class="player-input" placeholder="Player Name"><button class="btn-remove" onclick="removePlayer(this)">✕</button></div>
-        <div class="player-row"><div class="player-num">4.</div><input type="text" class="player-input" placeholder="Player Name"><button class="btn-remove" onclick="removePlayer(this)">✕</button></div>
-        <div class="player-row"><div class="player-num">5.</div><input type="text" class="player-input" placeholder="Player Name"><button class="btn-remove" onclick="removePlayer(this)">✕</button></div>
-        <div class="player-row"><div class="player-num">6.</div><input type="text" class="player-input" placeholder="Player Name"><button class="btn-remove" onclick="removePlayer(this)">✕</button></div>
+        <div class="player-row">
+          <div class="player-num">1.</div>
+          <input type="text" class="player-input" placeholder="Player Name">
+          <select class="player-skill" onchange="styleSkillSelect(this)">
+            <option value="Beginner" style="color: #60a5fa; background: var(--bg-dark);">Beginner</option>
+            <option value="Intermediate" selected style="color: #f5c842; background: var(--bg-dark);">Intermediate</option>
+            <option value="Advanced" style="color: #f87171; background: var(--bg-dark);">Advanced</option>
+          </select>
+          <button class="btn-remove" onclick="removePlayer(this)">✕</button>
+        </div>
+        <div class="player-row">
+          <div class="player-num">2.</div>
+          <input type="text" class="player-input" placeholder="Player Name">
+          <select class="player-skill" onchange="styleSkillSelect(this)">
+            <option value="Beginner" style="color: #60a5fa; background: var(--bg-dark);">Beginner</option>
+            <option value="Intermediate" selected style="color: #f5c842; background: var(--bg-dark);">Intermediate</option>
+            <option value="Advanced" style="color: #f87171; background: var(--bg-dark);">Advanced</option>
+          </select>
+          <button class="btn-remove" onclick="removePlayer(this)">✕</button>
+        </div>
+        <div class="player-row">
+          <div class="player-num">3.</div>
+          <input type="text" class="player-input" placeholder="Player Name">
+          <select class="player-skill" onchange="styleSkillSelect(this)">
+            <option value="Beginner" style="color: #60a5fa; background: var(--bg-dark);">Beginner</option>
+            <option value="Intermediate" selected style="color: #f5c842; background: var(--bg-dark);">Intermediate</option>
+            <option value="Advanced" style="color: #f87171; background: var(--bg-dark);">Advanced</option>
+          </select>
+          <button class="btn-remove" onclick="removePlayer(this)">✕</button>
+        </div>
+        <div class="player-row">
+          <div class="player-num">4.</div>
+          <input type="text" class="player-input" placeholder="Player Name">
+          <select class="player-skill" onchange="styleSkillSelect(this)">
+            <option value="Beginner" style="color: #60a5fa; background: var(--bg-dark);">Beginner</option>
+            <option value="Intermediate" selected style="color: #f5c842; background: var(--bg-dark);">Intermediate</option>
+            <option value="Advanced" style="color: #f87171; background: var(--bg-dark);">Advanced</option>
+          </select>
+          <button class="btn-remove" onclick="removePlayer(this)">✕</button>
+        </div>
+        <div class="player-row">
+          <div class="player-num">5.</div>
+          <input type="text" class="player-input" placeholder="Player Name">
+          <select class="player-skill" onchange="styleSkillSelect(this)">
+            <option value="Beginner" style="color: #60a5fa; background: var(--bg-dark);">Beginner</option>
+            <option value="Intermediate" selected style="color: #f5c842; background: var(--bg-dark);">Intermediate</option>
+            <option value="Advanced" style="color: #f87171; background: var(--bg-dark);">Advanced</option>
+          </select>
+          <button class="btn-remove" onclick="removePlayer(this)">✕</button>
+        </div>
+        <div class="player-row">
+          <div class="player-num">6.</div>
+          <input type="text" class="player-input" placeholder="Player Name">
+          <select class="player-skill" onchange="styleSkillSelect(this)">
+            <option value="Beginner" style="color: #60a5fa; background: var(--bg-dark);">Beginner</option>
+            <option value="Intermediate" selected style="color: #f5c842; background: var(--bg-dark);">Intermediate</option>
+            <option value="Advanced" style="color: #f87171; background: var(--bg-dark);">Advanced</option>
+          </select>
+          <button class="btn-remove" onclick="removePlayer(this)">✕</button>
+        </div>
       </div>
       
       <button class="btn-add" onclick="addPlayer()">+ Add More Players</button>
@@ -510,13 +803,33 @@ Example:
         <label>Number of Courts:</label>
         <input type="number" id="courts" class="rounds-input" value="2" min="1" max="10">
       </div>
-
-      <!-- TOURNAMENT MODE TOGGLE -->
-      <div class="rounds-row" style="margin-bottom: 15px; padding: 10px; background: var(--bg-card2); border-radius: 8px; border: 1px solid var(--border);">
-        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--text-primary); font-weight: 500;">
-          <input type="checkbox" id="fixed-pairs-toggle" onchange="renumberPlayers()" style="width: 18px; height: 18px; accent-color: var(--shuttle-gold);">
-          Tournament Mode (Fixed Doubles Pairs)
-        </label>
+      
+      <!-- SCHEDULER MODE SELECTION -->
+      <div style="margin-bottom: 20px; margin-top: 15px;">
+        <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 8px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase;">Scheduler Mode</label>
+        <div class="mode-selector-group">
+          <button type="button" class="mode-btn active" id="mode-regular" onclick="setMode('regular')">
+            <span class="mode-icon">🔄</span>
+            <div class="mode-text">
+              <div class="mode-title">Regular RR</div>
+              <div class="mode-desc">Individual rotating pairs</div>
+            </div>
+          </button>
+          <button type="button" class="mode-btn" id="mode-balanced" onclick="setMode('balanced')">
+            <span class="mode-icon">⚖️</span>
+            <div class="mode-text">
+              <div class="mode-title">Skill Balanced</div>
+              <div class="mode-desc">Match levels together</div>
+            </div>
+          </button>
+          <button type="button" class="mode-btn" id="mode-tournament" onclick="setMode('tournament')">
+            <span class="mode-icon">🏆</span>
+            <div class="mode-text">
+              <div class="mode-title">Tournament</div>
+              <div class="mode-desc">Fixed doubles pairs</div>
+            </div>
+          </button>
+        </div>
       </div>
       
       <div class="setup-actions">
@@ -569,13 +882,50 @@ Example:
 <script>
 let scheduleData = [];
 let allPlayers = [];
+let playerSkills = {};
+let currentMode = 'regular';
 let currentFilter = null;
+
+function setMode(mode) {
+  currentMode = mode;
+  document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+  const activeBtn = document.getElementById('mode-' + mode);
+  if (activeBtn) activeBtn.classList.add('active');
+  
+  const playerInputs = document.getElementById('player-inputs');
+  if (playerInputs) {
+    playerInputs.className = 'player-list mode-' + mode;
+  }
+  
+  renumberPlayers();
+}
+
+function styleSkillSelect(select) {
+  const val = select.value;
+  if (val === 'Beginner') {
+    select.style.borderColor = 'rgba(59, 130, 246, 0.5)';
+    select.style.color = '#93c5fd';
+  } else if (val === 'Advanced') {
+    select.style.borderColor = 'rgba(239, 68, 68, 0.5)';
+    select.style.color = '#fca5a5';
+  } else {
+    select.style.borderColor = 'var(--border)';
+    select.style.color = 'var(--text-primary)';
+  }
+}
 
 function addPlayer() {
   const container = document.getElementById('player-inputs');
   const row = document.createElement('div');
   row.className = 'player-row';
-  row.innerHTML = `<div class="player-num"></div><input type="text" class="player-input" placeholder="Player Name"><button class="btn-remove" onclick="removePlayer(this)">✕</button>`;
+  row.innerHTML = `<div class="player-num"></div>
+    <input type="text" class="player-input" placeholder="Player Name">
+    <select class="player-skill" onchange="styleSkillSelect(this)">
+      <option value="Beginner" style="color: #60a5fa; background: var(--bg-dark);">Beginner</option>
+      <option value="Intermediate" selected style="color: #f5c842; background: var(--bg-dark);">Intermediate</option>
+      <option value="Advanced" style="color: #f87171; background: var(--bg-dark);">Advanced</option>
+    </select>
+    <button class="btn-remove" onclick="removePlayer(this)">✕</button>`;
   container.appendChild(row);
   renumberPlayers();
 }
@@ -585,31 +935,55 @@ function removePlayer(btn) {
   renumberPlayers();
 }
 
-function togglePasteMode() {
-  const pasteArea = document.getElementById('pasteArea');
-  pasteArea.style.display = pasteArea.style.display === 'none' ? 'block' : 'none';
-}
+// Helper to extract and sanitize a list of player names from any text content
+function parsePlayerNames(text) {
+  if (!text) return [];
 
-function processPaste() {
-  const pasteInput = document.getElementById('pasteInput');
-  const text = pasteInput.value.trim();
-  if (!text) { showToast('Paste some text first!'); return; }
+  // First, see if the text contains newlines.
+  // If it does NOT contain newlines but contains commas/semicolons/tabs, we split by those.
+  // Otherwise, we split by line breaks.
+  let lines = [];
+  if (!text.includes('\n') && !text.includes('\r')) {
+    if (text.includes(',') || text.includes(';') || text.includes('\t')) {
+      lines = text.split(/[,;\t]+/);
+    } else {
+      lines = [text];
+    }
+  } else {
+    lines = text.split(/[\r\n]+/);
+  }
 
-  const lines = text.split('\n');
   let players = [];
 
-  for (const line of lines) {
-    const trimmed = line.trim();
+  for (let line of lines) {
+    let trimmed = line.trim();
     if (!trimmed) continue;
 
+    // 1. Remove WhatsApp/Telegram bracketed timestamps like "[19:42, 29/06/2026] SenderName: " or "[19:42] Sender: "
+    trimmed = trimmed.replace(/^\[[^\]\n]+\]\s*/, '');
+
+    // 2. Remove non-bracketed timestamps/dates at start like "29/06/2026, 19:42 - Sender:" or "19:42 - Sender:"
+    trimmed = trimmed.replace(/^\d{1,2}[\/\.-]\d{1,2}[\/\.-]\d{2,4}[,\s\d:.-]+-\s*/i, '');
+    trimmed = trimmed.replace(/^\d{1,2}:\d{2}\s*(?:-\s*)?/i, '');
+
+    // 3. Remove sender prefix if it contains a colon (e.g. "John: 1. Akash" -> "1. Akash")
+    // But be careful not to match if it looks like a URL
+    if (trimmed.includes(':') && !trimmed.startsWith('http')) {
+      const colonIdx = trimmed.indexOf(':');
+      const prefix = trimmed.substring(0, colonIdx).trim();
+      // If the prefix doesn't look like a lone number, treat it as a sender name and remove it
+      if (!/^\d+$/.test(prefix)) {
+        trimmed = trimmed.substring(colonIdx + 1).trim();
+      }
+    }
+
+    // 4. Skip common header lines or empty lines
     const skipPatterns = [
-      /^[-—–_\s]+$/,
+      /^[-—–_\s]+$/, // separator lines
       /^(sunday|monday|tuesday|wednesday|thursday|friday|saturday)/i,
-      /^\d{1,2}[\/\.-]\d{1,2}[\/\.-]\d{2,4}/,
-      /^(cap|capacity|max|limit|kitakasai|venue|location|time|date)/i,
-      /^(\d{1,2}:\d{2}|\d{1,2}~\d{1,2})/,
+      /^\d{1,2}[\/\.-]\d{1,2}[\/\.-]\d{2,4}/, // plain date lines
+      /^(cap|capacity|max|limit|kitakasai|venue|location|time|date|court|match|schedule|rounds?|players? list)/i,
       /^\(.*\)$/,
-      /^(\d{1,2})\s*[\/\.-]\s*(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)/i,
     ];
 
     let shouldSkip = false;
@@ -618,22 +992,51 @@ function processPaste() {
     }
     if (shouldSkip) continue;
 
-    let name = trimmed;
-    name = name.replace(/^(\d+[\.\)\-\s]+)/, '');
-    name = name.replace(/^[\s•\-\*\u200B\u200C\u200D\uFEFF]+/, '');
-    name = name.replace(/[\u200B\u200C\u200D\uFEFF]/g, '').trim();
-    if (name.length < 2) continue;
-    if (/^(players?|list|names?|team|group)/i.test(name)) continue;
+    // 5. Detect and extract skill levels in parentheses/brackets/suffix
+    let detectedSkill = 'Intermediate'; // default
+    const skillRegex = /[\(\[\s]+(beginner|beg|l1|intermediate|int|l2|advanced|adv|l3)[\)\]\s]*/i;
+    const skillMatch = trimmed.match(skillRegex);
+    if (skillMatch) {
+      const matchWord = skillMatch[1].toLowerCase();
+      if (matchWord.startsWith('beg') || matchWord === 'l1') {
+        detectedSkill = 'Beginner';
+      } else if (matchWord.startsWith('adv') || matchWord === 'l3') {
+        detectedSkill = 'Advanced';
+      } else if (matchWord.startsWith('int') || matchWord === 'l2') {
+        detectedSkill = 'Intermediate';
+      }
+      // Remove the skill part from the name
+      trimmed = trimmed.replace(skillRegex, '').trim();
+    }
 
-    players.push(name);
+    // 6. Remove list numbering prefixes like "1.", "1)", "1 - ", "• ", "- "
+    trimmed = trimmed.replace(/^(\d+[\.\)\-\/\s]+)/, '');
+    trimmed = trimmed.replace(/^[\s•\-\*\+\u200B\u200C\u200D\uFEFF🏸🏆👥]+/, '');
+    trimmed = trimmed.replace(/[\u200B\u200C\u200D\uFEFF]/g, '').trim();
+
+    // 7. Validate name
+    if (trimmed.length < 2) continue;
+    if (/^(players?|list|names?|team|group|session|badminton|vs)/i.test(trimmed)) continue;
+
+    players.push({
+      name: trimmed,
+      skill: detectedSkill
+    });
   }
+  return players;
+}
+
+function processPaste() {
+  const pasteInput = document.getElementById('pasteInput');
+  const text = pasteInput.value.trim();
+  if (!text) { showToast('Paste some text first!'); return; }
+
+  let players = parsePlayerNames(text);
 
   if (players.length === 0) { showToast('No player names found!'); return; }
-  if (players.length > 20) { showToast('Max 20 players allowed'); players = players.slice(0, 20); }
+  if (players.length > 40) { showToast('Max 40 players allowed'); players = players.slice(0, 40); }
 
   initPlayerList(players);
-  document.getElementById('pasteArea').style.display = 'none';
-  document.getElementById('pasteInput').value = '';
   showToast(`Loaded ${players.length} players! 👥`);
 }
 
@@ -643,18 +1046,82 @@ function initPlayerList(players) {
   players.forEach((p) => {
     const row = document.createElement('div');
     row.className = 'player-row';
-    row.innerHTML = `<div class="player-num"></div><input type="text" class="player-input" placeholder="Player Name" value="${p}"><button class="btn-remove" onclick="removePlayer(this)">✕</button>`;
+    row.innerHTML = `<div class="player-num"></div>
+      <input type="text" class="player-input" placeholder="Player Name" value="${p.name}">
+      <select class="player-skill" onchange="styleSkillSelect(this)">
+        <option value="Beginner" ${p.skill === 'Beginner' ? 'selected' : ''} style="color: #60a5fa; background: var(--bg-dark);">Beginner</option>
+        <option value="Intermediate" ${p.skill === 'Intermediate' ? 'selected' : ''} style="color: #f5c842; background: var(--bg-dark);">Intermediate</option>
+        <option value="Advanced" ${p.skill === 'Advanced' ? 'selected' : ''} style="color: #f87171; background: var(--bg-dark);">Advanced</option>
+      </select>
+      <button class="btn-remove" onclick="removePlayer(this)">✕</button>`;
     list.appendChild(row);
   });
   renumberPlayers();
 }
 
+// Global smart paste listener on the player inputs list container (using event delegation)
+document.getElementById('player-inputs').addEventListener('paste', function(e) {
+  if (!e.target.classList.contains('player-input')) return;
+
+  const clipboardData = e.clipboardData || window.clipboardData;
+  if (!clipboardData) return;
+  const pastedText = clipboardData.getData('Text');
+
+  // If there's multiple names (contains newline, comma, semicolon, or tab)
+  if (pastedText.includes('\n') || pastedText.includes('\r') || pastedText.includes(',') || pastedText.includes(';') || pastedText.includes('\t')) {
+    const players = parsePlayerNames(pastedText);
+    if (players.length <= 1) return; // Let default paste handle single name
+
+    e.preventDefault(); // Intercept default paste
+
+    // Get current rows
+    const rows = Array.from(document.querySelectorAll('.player-row'));
+    const currentInputRow = e.target.closest('.player-row');
+    const startIndex = rows.indexOf(currentInputRow);
+
+    let playerIndex = 0;
+    // Overwrite existing rows starting from current index
+    for (let i = startIndex; i < rows.length && playerIndex < players.length; i++) {
+      const input = rows[i].querySelector('.player-input');
+      const skillSelect = rows[i].querySelector('.player-skill');
+      if (input) {
+        input.value = players[playerIndex].name;
+      }
+      if (skillSelect) {
+        skillSelect.value = players[playerIndex].skill;
+      }
+      playerIndex++;
+    }
+
+    // Add new rows for any remaining names
+    const container = document.getElementById('player-inputs');
+    while (playerIndex < players.length) {
+      const p = players[playerIndex++];
+      const row = document.createElement('div');
+      row.className = 'player-row';
+      row.innerHTML = `<div class="player-num"></div>
+        <input type="text" class="player-input" placeholder="Player Name" value="${p.name}">
+        <select class="player-skill" onchange="styleSkillSelect(this)">
+          <option value="Beginner" ${p.skill === 'Beginner' ? 'selected' : ''} style="color: #60a5fa; background: var(--bg-dark);">Beginner</option>
+          <option value="Intermediate" ${p.skill === 'Intermediate' ? 'selected' : ''} style="color: #f5c842; background: var(--bg-dark);">Intermediate</option>
+          <option value="Advanced" ${p.skill === 'Advanced' ? 'selected' : ''} style="color: #f87171; background: var(--bg-dark);">Advanced</option>
+        </select>
+        <button class="btn-remove" onclick="removePlayer(this)">✕</button>`;
+      container.appendChild(row);
+    }
+
+    renumberPlayers();
+    showToast(`Smart-pasted ${players.length} players! 👥`);
+  }
+});
+
 function renumberPlayers() {
-  const isFixed = document.getElementById('fixed-pairs-toggle').checked;
+  const isFixed = (currentMode === 'tournament');
   const rows = document.querySelectorAll('.player-row');
   
   rows.forEach((row, idx) => {
     const numEl = row.querySelector('.player-num');
+    const selectEl = row.querySelector('.player-skill');
     if (isFixed) {
       const teamNum = Math.floor(idx / 2) + 1;
       numEl.textContent = `Team ${teamNum}`;
@@ -679,6 +1146,10 @@ function renumberPlayers() {
       row.style.borderTop = "none";
       row.style.paddingTop = "0";
     }
+
+    if (selectEl) {
+      styleSkillSelect(selectEl);
+    }
   });
 }
 
@@ -690,11 +1161,18 @@ function switchTab(tabId) {
   document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
   
-  document.getElementById('tab-' + tabId).classList.add('active');
-  const btns = document.querySelectorAll('.tab-btn');
-  if(tabId === 'setup') btns[0].classList.add('active');
-  if(tabId === 'schedule') btns[1].classList.add('active');
-  if(tabId === 'stats') btns[2].classList.add('active');
+  const contentEl = document.getElementById('tab-' + tabId);
+  if (contentEl) contentEl.classList.add('active');
+  
+  const activeBtn = document.getElementById('tab-btn-' + tabId);
+  if (activeBtn) {
+    activeBtn.classList.add('active');
+  } else {
+    const btns = document.querySelectorAll('.tab-btn');
+    if(tabId === 'setup') btns[0].classList.add('active');
+    if(tabId === 'schedule') btns[1].classList.add('active');
+    if(tabId === 'stats') btns[2].classList.add('active');
+  }
 }
 
 function showToast(msg) {
@@ -705,21 +1183,35 @@ function showToast(msg) {
 }
 
 function generateSchedule() {
-  const inputs = document.querySelectorAll('.player-input');
-  allPlayers = Array.from(inputs).map(i => i.value.trim()).filter(v => v);
+  const rows = document.querySelectorAll('.player-row');
+  const playersWithSkills = Array.from(rows).map(row => {
+    const nameInput = row.querySelector('.player-input');
+    const skillSelect = row.querySelector('.player-skill');
+    return {
+      name: nameInput ? nameInput.value.trim() : '',
+      skill: skillSelect ? skillSelect.value : 'Intermediate'
+    };
+  }).filter(p => p.name);
+
+  allPlayers = playersWithSkills.map(p => p.name);
   const numRounds = parseInt(document.getElementById('rounds').value);
   const requestedCourts = parseInt(document.getElementById('courts').value);
-  const isFixedPairs = document.getElementById('fixed-pairs-toggle').checked;
 
   if (allPlayers.length < 4) {
     showToast('Need at least 4 players! 🏸');
     return;
   }
 
+  // Populate global playerSkills map
+  playerSkills = {};
+  playersWithSkills.forEach(p => {
+    playerSkills[p.name] = p.skill;
+  });
+
   scheduleData = [];
-  
+
   // --- TOURNAMENT MODE (FIXED PAIRS) ---
-  if (isFixedPairs) {
+  if (currentMode === 'tournament') {
     if (allPlayers.length % 2 !== 0) {
       showToast('Tournament mode requires an even number of players! 🏸');
       return;
@@ -766,7 +1258,7 @@ function generateSchedule() {
       scheduleData.push({ rnd, matches, resting: restingNames });
     }
   } 
-  // --- ORIGINAL ROUND-ROBIN MODE (RANDOM PAIRS) ---
+  // --- INDIVIDUAL MODES: REGULAR OR BALANCED ---
   else {
     const numCourts = Math.min(requestedCourts, Math.floor(allPlayers.length / 4));
     const actualResting = allPlayers.length - (numCourts * 4);
@@ -774,22 +1266,123 @@ function generateSchedule() {
     const restCount = {};
     allPlayers.forEach(p => restCount[p] = 0);
 
+    // Track partnership and opponent history for individual scheduling optimization
+    const partnerHistory = {};
+    const opponentHistory = {};
+    allPlayers.forEach(p => {
+      partnerHistory[p] = {};
+      opponentHistory[p] = {};
+      allPlayers.forEach(o => {
+        if (p !== o) {
+          partnerHistory[p][o] = 0;
+          opponentHistory[p][o] = 0;
+        }
+      });
+    });
+
+    // Skill score mappings for Balanced mode
+    const skillScores = {
+      'Beginner': 1,
+      'Intermediate': 2,
+      'Advanced': 3
+    };
+
     for (let rnd = 1; rnd <= numRounds; rnd++) {
+      // Step 1: Select resting players by sorting by restCount + randomized tie-breakers
       let available = [...allPlayers].sort(() => Math.random() - 0.5);
       available.sort((a, b) => restCount[a] - restCount[b]);
 
       const resting = available.splice(0, actualResting);
       resting.forEach(p => restCount[p]++);
 
-      const matches = [];
-      for (let c = 0; c < numCourts; c++) {
-        if (available.length < 4) break;
-        matches.push({
-          t1: [available.shift(), available.shift()],
-          t2: [available.shift(), available.shift()]
-        });
+      // Step 2: Partition playing players into matches and teams using an optimization search
+      let bestRoundMatches = [];
+      let bestRoundCost = Infinity;
+
+      // Sample random configurations to find the best balance of skills and partner variety
+      const iterations = (currentMode === 'balanced') ? 2000 : 1000;
+      for (let iter = 0; iter < iterations; iter++) {
+        // Shuffle the playing players
+        const shuffled = [...available].sort(() => Math.random() - 0.5);
+        
+        const candidateMatches = [];
+        let totalCost = 0;
+
+        for (let c = 0; c < numCourts; c++) {
+          const p0 = shuffled[c * 4];
+          const p1 = shuffled[c * 4 + 1];
+          const p2 = shuffled[c * 4 + 2];
+          const p3 = shuffled[c * 4 + 3];
+
+          // 3 possible ways to group these 4 players on a single court
+          const combs = [
+            { t1: [p0, p1], t2: [p2, p3] },
+            { t1: [p0, p2], t2: [p1, p3] },
+            { t1: [p0, p3], t2: [p1, p2] }
+          ];
+
+          let bestComb = null;
+          let minCombCost = Infinity;
+
+          combs.forEach(comb => {
+            let cost = 0;
+
+            // a) Skill balance penalty (only in Balanced mode)
+            if (currentMode === 'balanced') {
+              const skill0 = skillScores[playerSkills[comb.t1[0]]] || 2;
+              const skill1 = skillScores[playerSkills[comb.t1[1]]] || 2;
+              const skill2 = skillScores[playerSkills[comb.t2[0]]] || 2;
+              const skill3 = skillScores[playerSkills[comb.t2[1]]] || 2;
+
+              const t1Skill = skill0 + skill1;
+              const t2Skill = skill2 + skill3;
+              const skillDiff = Math.abs(t1Skill - t2Skill);
+              cost += skillDiff * 2500; // heavy scale to prioritize skill balance
+            }
+
+            // b) Partnership frequency cost
+            const p01 = partnerHistory[comb.t1[0]][comb.t1[1]] || 0;
+            const p23 = partnerHistory[comb.t2[0]][comb.t2[1]] || 0;
+            cost += (p01 * p01 * 100) + (p23 * p23 * 100);
+
+            // c) Opponent frequency cost
+            const opp02 = opponentHistory[comb.t1[0]][comb.t2[0]] || 0;
+            const opp03 = opponentHistory[comb.t1[0]][comb.t2[1]] || 0;
+            const opp12 = opponentHistory[comb.t1[1]][comb.t2[0]] || 0;
+            const opp13 = opponentHistory[comb.t1[1]][comb.t2[1]] || 0;
+            cost += (opp02 * opp02 + opp03 * opp03 + opp12 * opp12 + opp13 * opp13) * 20;
+
+            if (cost < minCombCost) {
+              minCombCost = cost;
+              bestComb = comb;
+            }
+          });
+
+          candidateMatches.push(bestComb);
+          totalCost += minCombCost;
+        }
+
+        if (totalCost < bestRoundCost) {
+          bestRoundCost = totalCost;
+          bestRoundMatches = candidateMatches;
+        }
       }
-      scheduleData.push({ rnd, matches, resting });
+
+      // Step 3: Record the best match partition, and update histories for future rounds
+      bestRoundMatches.forEach(m => {
+        const u = m.t1[0], v = m.t1[1], x = m.t2[0], y = m.t2[1];
+        partnerHistory[u][v]++;
+        partnerHistory[v][u]++;
+        partnerHistory[x][y]++;
+        partnerHistory[y][x]++;
+
+        opponentHistory[u][x]++; opponentHistory[x][u]++;
+        opponentHistory[u][y]++; opponentHistory[y][u]++;
+        opponentHistory[v][x]++; opponentHistory[x][v]++;
+        opponentHistory[v][y]++; opponentHistory[y][v]++;
+      });
+
+      scheduleData.push({ rnd, matches: bestRoundMatches, resting });
     }
   }
 
@@ -829,11 +1422,38 @@ function renderFilterPills() {
   });
 }
 
+function getSkillBullet(player) {
+  const skill = playerSkills[player];
+  if (!skill) return '';
+  if (skill === 'Beginner') {
+    return `<span style="color:#60a5fa; font-size:0.75rem; margin-left:4px;" title="Beginner">●</span>`;
+  } else if (skill === 'Advanced') {
+    return `<span style="color:#f87171; font-size:0.75rem; margin-left:4px;" title="Advanced">●</span>`;
+  } else {
+    return `<span style="color:var(--shuttle-gold); font-size:0.75rem; margin-left:4px;" title="Intermediate">●</span>`;
+  }
+}
+
 function renderSchedule() {
   const container = document.getElementById('schedule-output');
   container.innerHTML = '';
 
-  if (scheduleData.length === 0) return;
+  if (scheduleData.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">🏸</div>
+        <p>No schedule generated yet.</p>
+        <p style="font-size:0.8rem; margin-top:8px;">Go to the Setup tab to add players and generate.</p>
+      </div>`;
+    return;
+  }
+
+  // Toggle filter-active class on schedule-output container to control dimming of inactive cards via CSS
+  if (currentFilter) {
+    container.classList.add('filter-active');
+  } else {
+    container.classList.remove('filter-active');
+  }
 
   scheduleData.forEach(round => {
     const hasFilteredPlayer = currentFilter && (
@@ -841,27 +1461,49 @@ function renderSchedule() {
       round.matches.some(m => m.t1.includes(currentFilter) || m.t2.includes(currentFilter))
     );
     
-    // Set card class dynamically based on currentFilter
-    const cardClass = currentFilter ? (hasFilteredPlayer ? 'round-card has-player' : 'round-card') : 'round-card has-player';
+    // Set card class dynamically based on currentFilter. Only use has-player when a filter is active and the player matches.
+    const cardClass = currentFilter ? (hasFilteredPlayer ? 'round-card has-player' : 'round-card') : 'round-card';
     
     let html = `<div class="${cardClass}">
       <div class="round-header"><div class="round-num">${round.rnd}</div> Round ${round.rnd}</div>`;
     
     round.matches.forEach((m, idx) => {
-      const hl = (p) => p === currentFilter ? `<span style="color:var(--shuttle-gold); font-weight:bold;">${p}</span>` : p;
+      const hl = (p) => {
+        const bullet = getSkillBullet(p);
+        if (p === currentFilter) {
+          return `<span style="color:var(--shuttle-gold); font-weight:700; text-shadow: 0 0 8px rgba(245, 200, 66, 0.4);">${p}</span>${bullet}`;
+        }
+        return `<span>${p}</span>${bullet}`;
+      };
+      
       html += `
         <div class="court-row">
           <div class="court-label">Court ${idx + 1}</div>
-          <div class="match-teams">
-            <div class="team">${hl(m.t1[0])} & ${hl(m.t1[1])}</div>
-            <span class="vs">vs</span>
-            <div class="team">${hl(m.t2[0])} & ${hl(m.t2[1])}</div>
+          <div class="court-visual-card">
+            <div class="team-side left">
+              <div class="court-player">${hl(m.t1[0])}</div>
+              <div class="court-player">${hl(m.t1[1])}</div>
+            </div>
+            <div class="vs-badge-container">
+              <span class="vs-badge-text">VS</span>
+            </div>
+            <div class="team-side right">
+              <div class="court-player">${hl(m.t2[0])}</div>
+              <div class="court-player">${hl(m.t2[1])}</div>
+            </div>
           </div>
         </div>`;
     });
 
     if (round.resting.length > 0) {
-      const restingHl = round.resting.map(p => p === currentFilter ? `<span style="color:#fff; font-weight:bold;">${p}</span>` : p).join(', ');
+      const restingHl = round.resting.map(p => {
+        const bullet = getSkillBullet(p);
+        if (p === currentFilter) {
+          return `<span style="color:#fff; font-weight:700; text-shadow: 0 0 8px rgba(255, 255, 255, 0.4);">${p}</span>${bullet}`;
+        }
+        return `${p}${bullet}`;
+      }).join(', ');
+      
       html += `
         <div class="rest-row">
           <div class="rest-label">Resting</div>
@@ -875,34 +1517,262 @@ function renderSchedule() {
 
 function renderStats() {
   const container = document.getElementById('stats-output');
-  container.innerHTML = '<div class="stats-grid"></div>';
-  const grid = container.querySelector('.stats-grid');
+  container.innerHTML = '';
   
-  if (scheduleData.length === 0) return;
+  if (scheduleData.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">📊</div>
+        <p>Stats will appear here after generation.</p>
+      </div>`;
+    return;
+  }
 
+  // 1. Calculate base stats
   const stats = {};
-  allPlayers.forEach(p => stats[p] = { games: 0, rests: 0 });
-
-  scheduleData.forEach(r => {
-    r.resting.forEach(p => stats[p] && stats[p].rests++);
-    r.matches.forEach(m => {
-      [...m.t1, ...m.t2].forEach(p => stats[p] && stats[p].games++);
+  allPlayers.forEach(p => {
+    stats[p] = {
+      games: 0,
+      rests: 0,
+      partners: {},
+      opponents: {}
+    };
+    allPlayers.forEach(o => {
+      if (o !== p) {
+        stats[p].partners[o] = 0;
+        stats[p].opponents[o] = 0;
+      }
     });
   });
 
-  let html = `<div class="stat-card"><h3>Games Played</h3>`;
-  allPlayers.sort((a,b) => stats[b].games - stats[a].games).forEach(p => {
-    html += `<div class="stat-row"><span class="stat-name">${p}</span><span class="stat-val">${stats[p].games}</span></div>`;
-  });
-  html += `</div>`;
+  scheduleData.forEach(r => {
+    r.resting.forEach(p => {
+      if (stats[p]) stats[p].rests++;
+    });
+    r.matches.forEach(m => {
+      const t1 = m.t1;
+      const t2 = m.t2;
+      
+      // Update games
+      t1.forEach(p => { if (stats[p]) stats[p].games++; });
+      t2.forEach(p => { if (stats[p]) stats[p].games++; });
 
-  html += `<div class="stat-card"><h3>Times Rested</h3>`;
-  allPlayers.sort((a,b) => stats[b].rests - stats[a].rests).forEach(p => {
-    html += `<div class="stat-row"><span class="stat-name">${p}</span><span class="stat-val">${stats[p].rests}</span></div>`;
-  });
-  html += `</div>`;
+      // Update partners (same team)
+      if (t1.length === 2) {
+        const p1 = t1[0], p2 = t1[1];
+        if (stats[p1]) stats[p1].partners[p2] = (stats[p1].partners[p2] || 0) + 1;
+        if (stats[p2]) stats[p2].partners[p1] = (stats[p2].partners[p1] || 0) + 1;
+      }
+      if (t2.length === 2) {
+        const p1 = t2[0], p2 = t2[1];
+        if (stats[p1]) stats[p1].partners[p2] = (stats[p1].partners[p2] || 0) + 1;
+        if (stats[p2]) stats[p2].partners[p1] = (stats[p2].partners[p1] || 0) + 1;
+      }
 
-  grid.innerHTML = html;
+      // Update opponents (opposite team)
+      t1.forEach(p1 => {
+        t2.forEach(p2 => {
+          if (stats[p1]) stats[p1].opponents[p2] = (stats[p1].opponents[p2] || 0) + 1;
+          if (stats[p2]) stats[p2].opponents[p1] = (stats[p2].opponents[p1] || 0) + 1;
+        });
+      });
+    });
+  });
+
+  // Calculate summary metrics
+  const totalMatches = scheduleData.reduce((acc, r) => acc + r.matches.length, 0);
+  const totalGamesArray = allPlayers.map(p => stats[p].games);
+  const minGames = Math.min(...totalGamesArray);
+  const maxGames = Math.max(...totalGamesArray);
+  const gameSpread = maxGames - minGames;
+  const isPerfectGameBalance = gameSpread <= 1;
+
+  const totalRestsArray = allPlayers.map(p => stats[p].rests);
+  const minRests = Math.min(...totalRestsArray);
+  const maxRests = Math.max(...totalRestsArray);
+  const restSpread = maxRests - minRests;
+  const isPerfectRestBalance = restSpread <= 1;
+
+  // Render top overview cards
+  let summaryHtml = `
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 16px;">
+      <div class="stat-card" style="padding: 12px; text-align: center;">
+        <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">Total Matches</div>
+        <div style="font-size: 1.4rem; font-weight: 700; color: var(--shuttle-gold);">${totalMatches}</div>
+      </div>
+      <div class="stat-card" style="padding: 12px; text-align: center;">
+        <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">Game Balance</div>
+        <div style="margin-top: 2px;">
+          ${isPerfectGameBalance ? 
+            '<span class="badge badge-green" style="font-size: 0.75rem;">Perfect (Spread &le; 1)</span>' : 
+            `<span class="badge badge-yellow" style="font-size: 0.75rem;">Fair (Spread: ${gameSpread})</span>`}
+        </div>
+      </div>
+      <div class="stat-card" style="padding: 12px; text-align: center;">
+        <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">Rest Balance</div>
+        <div style="margin-top: 2px;">
+          ${isPerfectRestBalance ? 
+            '<span class="badge badge-green" style="font-size: 0.75rem;">Perfect (Spread &le; 1)</span>' : 
+            `<span class="badge badge-yellow" style="font-size: 0.75rem;">Fair (Spread: ${restSpread})</span>`}
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Create grid for detailed tables
+  let gridHtml = `<div class="stats-grid">`;
+
+  // Games Played list with progress bar meters
+  gridHtml += `
+    <div class="stat-card">
+      <h3>Games Played</h3>
+      <div style="max-height: 280px; overflow-y: auto; padding-right: 6px;">
+  `;
+  const maxGamesVal = Math.max(...allPlayers.map(p => stats[p].games), 1);
+  [...allPlayers].sort((a,b) => stats[b].games - stats[a].games || a.localeCompare(b)).forEach(p => {
+    const s = playerSkills[p] || 'Intermediate';
+    const sClass = s === 'Beginner' ? 'badge-blue' : (s === 'Advanced' ? 'badge-red' : 'badge-yellow');
+    const badgeHtml = (currentMode === 'balanced') ? `<span class="badge ${sClass}" style="font-size: 0.6rem; margin-left: 6px; padding: 1.5px 5px;">${s}</span>` : '';
+    const pct = Math.round((stats[p].games / maxGamesVal) * 100);
+    gridHtml += `
+      <div class="stat-row" style="flex-direction: column; align-items: stretch; gap: 4px; padding: 8px 0;">
+        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.82rem;">
+          <span class="stat-name">${p}${badgeHtml}</span>
+          <span class="stat-val" style="color: var(--court-light);">${stats[p].games} games</span>
+        </div>
+        <div style="width: 100%; height: 4px; background: rgba(255,255,255,0.05); border-radius: 2px; overflow: hidden;">
+          <div style="width: ${pct}%; height: 100%; background: linear-gradient(90deg, var(--court-light), var(--shuttle-gold)); border-radius: 2px;"></div>
+        </div>
+      </div>`;
+  });
+  gridHtml += `
+      </div>
+    </div>
+  `;
+
+  // Times Rested list with progress bar meters
+  gridHtml += `
+    <div class="stat-card">
+      <h3>Times Rested</h3>
+      <div style="max-height: 280px; overflow-y: auto; padding-right: 6px;">
+  `;
+  const maxRestsVal = Math.max(...allPlayers.map(p => stats[p].rests), 1);
+  [...allPlayers].sort((a,b) => stats[b].rests - stats[a].rests || a.localeCompare(b)).forEach(p => {
+    const s = playerSkills[p] || 'Intermediate';
+    const sClass = s === 'Beginner' ? 'badge-blue' : (s === 'Advanced' ? 'badge-red' : 'badge-yellow');
+    const badgeHtml = (currentMode === 'balanced') ? `<span class="badge ${sClass}" style="font-size: 0.6rem; margin-left: 6px; padding: 1.5px 5px;">${s}</span>` : '';
+    const pct = Math.round((stats[p].rests / maxRestsVal) * 100);
+    gridHtml += `
+      <div class="stat-row" style="flex-direction: column; align-items: stretch; gap: 4px; padding: 8px 0;">
+        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.82rem;">
+          <span class="stat-name">${p}${badgeHtml}</span>
+          <span class="stat-val" style="color: #60a5fa;">${stats[p].rests} rests</span>
+        </div>
+        <div style="width: 100%; height: 4px; background: rgba(255,255,255,0.05); border-radius: 2px; overflow: hidden;">
+          <div style="width: ${pct}%; height: 100%; background: linear-gradient(90deg, #3b82f6, #60a5fa); border-radius: 2px;"></div>
+        </div>
+      </div>`;
+  });
+  gridHtml += `
+      </div>
+    </div>
+  `;
+
+  // Full width fairness analysis table (partner-table)
+  const isTournamentMode = (currentMode === 'tournament');
+
+  gridHtml += `
+    <div class="stat-card full">
+      <h3>${isTournamentMode ? 'Tournament Opponent Frequencies' : 'Partnership & Pairing Fairness'}</h3>
+      <div style="overflow-x: auto; -webkit-overflow-scrolling: touch; margin-top: 10px;">
+        <table class="partner-table">
+          <thead>
+            <tr>
+              <th style="padding-left: 0; min-width: 100px;">Player</th>
+              <th style="min-width: 90px;">Games / Rests</th>
+              <th style="min-width: 110px;">${isTournamentMode ? 'Opponents Met' : 'Partners Met'}</th>
+              <th style="min-width: 250px;">Frequencies Breakdown</th>
+            </tr>
+          </thead>
+          <tbody>
+  `;
+
+  // For each player, generate rows
+  [...allPlayers].sort((a,b) => a.localeCompare(b)).forEach(p => {
+    const pStats = stats[p];
+    
+    let metBadge = '';
+    let freqBreakdown = '';
+
+    const s = playerSkills[p] || 'Intermediate';
+    const sClass = s === 'Beginner' ? 'badge-blue' : (s === 'Advanced' ? 'badge-red' : 'badge-yellow');
+    const badgeHtml = (currentMode === 'balanced') ? `<span class="badge ${sClass}" style="font-size: 0.6rem; margin-left: 6px; padding: 1px 4px;">${s}</span>` : '';
+
+    if (isTournamentMode) {
+      // Find partner (fixed pair)
+      const isIdx = allPlayers.indexOf(p);
+      const partnerIdx = isIdx % 2 === 0 ? isIdx + 1 : isIdx - 1;
+      const partnerName = allPlayers[partnerIdx];
+
+      // Opponents are all other players except themselves and partner
+      const possibleOpponents = allPlayers.filter(o => o !== p && o !== partnerName);
+      const opponentsMet = possibleOpponents.filter(o => (pStats.opponents[o] || 0) > 0);
+      const unmetCount = possibleOpponents.length - opponentsMet.length;
+
+      if (unmetCount === 0) {
+        metBadge = `<span class="badge badge-green">All Met (${opponentsMet.length})</span>`;
+      } else {
+        metBadge = `<span class="badge badge-yellow">${unmetCount} Unmet</span>`;
+      }
+
+      // Generate frequencies list
+      const freqs = possibleOpponents.map(o => {
+        const count = pStats.opponents[o] || 0;
+        return `${o}: <strong style="color:var(--shuttle-gold);">${count}</strong>`;
+      }).join(', ');
+      
+      freqBreakdown = `<span style="font-size:0.75rem; color:var(--text-muted);">Partner: <strong>${partnerName}</strong> &nbsp;|&nbsp; Opponents &rarr; ${freqs}</span>`;
+    } else {
+      // Regular mode: Partners
+      const possiblePartners = allPlayers.filter(o => o !== p);
+      const partnersMet = possiblePartners.filter(o => (pStats.partners[o] || 0) > 0);
+      const unmetCount = possiblePartners.length - partnersMet.length;
+
+      if (unmetCount === 0) {
+        metBadge = `<span class="badge badge-green">All Met (${partnersMet.length})</span>`;
+      } else {
+        metBadge = `<span class="badge badge-yellow">${unmetCount} Unmet</span>`;
+      }
+
+      // Generate frequencies list
+      const freqs = possiblePartners.map(o => {
+        const count = pStats.partners[o] || 0;
+        return `${o}: <strong style="color:var(--shuttle-gold);">${count}</strong>`;
+      }).join(', ');
+
+      freqBreakdown = `<span style="font-size:0.75rem; color:var(--text-muted);">${freqs}</span>`;
+    }
+
+    gridHtml += `
+      <tr>
+        <td style="font-weight: 600; color: var(--text-primary); padding: 8px 6px 8px 0;">${p}${badgeHtml}</td>
+        <td><span style="font-variant-numeric: tabular-nums;">${pStats.games} G / ${pStats.rests} R</span></td>
+        <td>${metBadge}</td>
+        <td>${freqBreakdown}</td>
+      </tr>
+    `;
+  });
+
+  gridHtml += `
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+
+  gridHtml += `</div>`; // Close grid
+
+  container.innerHTML = summaryHtml + gridHtml;
 }
 
 function copySchedule() {
@@ -924,8 +1794,8 @@ function copySchedule() {
   navigator.clipboard.writeText(text).then(() => showToast('Copied to clipboard! 📋'));
 }
 
-// Initial numbering set
-renumberPlayers();
+// Initial mode setup
+setMode('regular');
 </script>
 
 </body>
