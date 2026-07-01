@@ -632,6 +632,29 @@
   }
   .player-skill:focus { border-color: var(--court-light); }
 
+  /* PLAYER PAIR DROP-DOWN */
+  .player-pair {
+    background: var(--bg-dark);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 9px 8px;
+    color: var(--text-muted);
+    font-family: 'Inter', sans-serif;
+    font-size: 16px; /* Prevents auto-zoom on mobile Chrome/Safari */
+    outline: none;
+    transition: all 0.2s;
+    width: 145px;
+    cursor: pointer;
+    flex-shrink: 0;
+    min-height: 42px; /* Touch-friendly height */
+  }
+  .player-pair:focus { border-color: var(--court-light); }
+
+  /* Show pair selector dropdown only when in Tournament mode */
+  .player-list:not(.mode-tournament) .player-pair {
+    display: none !important;
+  }
+
   .badge-blue { background: rgba(37, 99, 235, 0.2); color: #93c5fd; }
   .badge-red { background: rgba(239, 68, 68, 0.2); color: #f87171; }
 
@@ -753,6 +776,12 @@
       min-width: 0 !important; /* Allow select to shrink if needed */
       font-size: 14px !important; /* Keep it compact on mobile to prevent clipping */
     }
+    .player-pair {
+      width: 115px !important; /* Make select narrower on mobile */
+      padding: 9px 4px !important;
+      min-width: 0 !important; /* Allow select to shrink if needed */
+      font-size: 14px !important; /* Keep it compact on mobile to prevent clipping */
+    }
     .btn-remove {
       width: 38px !important;
       height: 38px !important;
@@ -789,6 +818,216 @@
   /* Show skill selector dropdown only when in Skill Balanced mode */
   .player-list:not(.mode-balanced) .player-skill {
     display: none !important;
+  }
+
+  /* Interactive score inputs and view selector */
+  .score-input-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 3;
+  }
+  .score-num-input {
+    width: 32px;
+    height: 28px;
+    background: rgba(0,0,0,0.6);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--shuttle-gold);
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-align: center;
+    outline: none;
+    -moz-appearance: textfield;
+  }
+  .score-num-input::-webkit-outer-spin-button,
+  .score-num-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  .score-num-input:focus {
+    border-color: var(--shuttle-gold);
+    background: rgba(0,0,0,0.8);
+    box-shadow: 0 0 6px rgba(245, 200, 66, 0.3);
+  }
+
+  /* Visual Court mapping */
+  .view-selector-tabs {
+    display: flex;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 4px;
+    margin-bottom: 14px;
+  }
+  .view-tab-btn {
+    flex: 1;
+    background: none;
+    border: none;
+    padding: 8px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-radius: 6px;
+    text-align: center;
+    transition: all 0.2s;
+  }
+  .view-tab-btn.active {
+    background: var(--court-light);
+    color: var(--text-primary);
+  }
+
+  .visual-court-map {
+    background: linear-gradient(to bottom, #11361c 0%, #164625 100%);
+    border: 2px solid #ffffff;
+    border-radius: 6px;
+    position: relative;
+    aspect-ratio: 1.8 / 1;
+    width: 100%;
+    max-width: 380px;
+    margin: 0 auto;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+    overflow: hidden;
+  }
+  .court-center-net {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #f5c842;
+    z-index: 5;
+    box-shadow: 0 0 6px rgba(245,200,66,0.5);
+  }
+  .court-net-label {
+    position: absolute;
+    left: 50%;
+    top: 4px;
+    transform: translateX(-50%);
+    background: rgba(245,200,66,0.95);
+    color: #060d09;
+    font-size: 0.5rem;
+    font-weight: 800;
+    padding: 1px 3px;
+    border-radius: 2px;
+    z-index: 6;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .court-short-service-left {
+    position: absolute;
+    left: 30%;
+    top: 0;
+    bottom: 0;
+    width: 1.5px;
+    background: rgba(255, 255, 255, 0.4);
+  }
+  .court-short-service-right {
+    position: absolute;
+    right: 30%;
+    top: 0;
+    bottom: 0;
+    width: 1.5px;
+    background: rgba(255, 255, 255, 0.4);
+  }
+  .court-center-line-left {
+    position: absolute;
+    left: 0;
+    width: 30%;
+    top: 50%;
+    height: 1.5px;
+    background: rgba(255, 255, 255, 0.4);
+  }
+  .court-center-line-right {
+    position: absolute;
+    right: 0;
+    width: 30%;
+    top: 50%;
+    height: 1.5px;
+    background: rgba(255, 255, 255, 0.4);
+  }
+  .court-doubles-sideline-top {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 8%;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.3);
+  }
+  .court-doubles-sideline-bottom {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 8%;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.3);
+  }
+  .court-player-node {
+    position: absolute;
+    padding: 3px 6px;
+    background: rgba(6, 13, 9, 0.85);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    max-width: 110px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    z-index: 10;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    transition: all 0.2s;
+  }
+  .court-player-node.active-filter {
+    background: rgba(245, 200, 66, 0.95);
+    color: #060d09;
+    border-color: #060d09;
+    box-shadow: 0 0 10px rgba(245,200,66,0.6);
+  }
+  .p-left-top {
+    left: 6%;
+    top: 15%;
+  }
+  .p-left-bottom {
+    left: 6%;
+    bottom: 15%;
+  }
+  .p-right-top {
+    right: 6%;
+    top: 15%;
+  }
+  .p-right-bottom {
+    right: 6%;
+    bottom: 15%;
+  }
+  .map-court-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+    padding: 0 4px;
+  }
+
+  /* Responsive refinements for score inputs on mobile */
+  @media (max-width: 600px) {
+    .score-num-input {
+      width: 28px;
+      height: 24px;
+      font-size: 0.78rem;
+    }
+    .score-input-container {
+      gap: 4px;
+    }
+    .court-player-node {
+      font-size: 0.62rem;
+      max-width: 80px;
+      padding: 2px 4px;
+    }
   }
 </style>
 </head>
@@ -836,67 +1075,33 @@ Example:
         </div>
       </div>
       
+      <!-- SAVED PLAYERS POOL (QUICK ADDITION) -->
+      <div class="saved-players-card" style="background: rgba(245, 200, 66, 0.04); border: 1px dashed rgba(45, 158, 94, 0.25); border-radius: 12px; padding: 16px; margin-bottom: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+          <label style="font-size: 0.9rem; font-weight: 700; color: var(--shuttle-gold); display: flex; align-items: center; gap: 6px; font-family: 'Space Grotesk', sans-serif;">
+            👤 Quick-Add Player Pool
+          </label>
+          <button class="btn btn-secondary" onclick="clearQuickAddPool()" style="padding: 2px 8px; height: 22px; font-size: 0.68rem; border-radius: 4px; cursor: pointer; border: 1px solid rgba(239, 68, 68, 0.2); color: #f87171; margin: 0; display: flex; align-items: center; gap: 2px; background: rgba(239, 68, 68, 0.05);">✕ Clear Pool</button>
+        </div>
+        
+        <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 12px; line-height: 1.4;">
+          Tap any player below to instantly add them to today's active list!
+        </p>
+
+        <!-- Pool Container -->
+        <div id="quickAddContainer" style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; min-height: 34px; align-items: center;">
+          <!-- Loaded dynamically -->
+          <span style="font-size: 0.75rem; color: var(--text-muted); font-style: italic;">No saved players. Type names below and click "Save Player List" to populate this pool!</span>
+        </div>
+
+        <div style="display: flex; gap: 8px; align-items: center; border-top: 1px solid var(--border); padding-top: 12px;">
+          <button class="btn btn-primary" onclick="saveCurrentPlayersToPool()" style="flex: 1; padding: 0 16px; height: 38px; font-size: 0.82rem; border-radius: 6px; cursor: pointer; border: none; margin: 0; display: flex; align-items: center; justify-content: center; gap: 6px; background: var(--court-light); color: var(--text-primary); font-weight: 700; box-shadow: 0 2px 6px rgba(45, 158, 94, 0.3);">
+            💾 Save Player List (Persistent)
+          </button>
+        </div>
+      </div>
+      
       <div id="player-inputs" class="player-list">
-        <div class="player-row">
-          <div class="player-num">1.</div>
-          <input type="text" class="player-input" placeholder="Player Name">
-          <select class="player-skill" onchange="styleSkillSelect(this)">
-            <option value="Beginner" style="color: #60a5fa; background: var(--bg-dark);">Beginner</option>
-            <option value="Intermediate" selected style="color: #f5c842; background: var(--bg-dark);">Intermediate</option>
-            <option value="Advanced" style="color: #f87171; background: var(--bg-dark);">Advanced</option>
-          </select>
-          <button class="btn-remove" onclick="removePlayer(this)">✕</button>
-        </div>
-        <div class="player-row">
-          <div class="player-num">2.</div>
-          <input type="text" class="player-input" placeholder="Player Name">
-          <select class="player-skill" onchange="styleSkillSelect(this)">
-            <option value="Beginner" style="color: #60a5fa; background: var(--bg-dark);">Beginner</option>
-            <option value="Intermediate" selected style="color: #f5c842; background: var(--bg-dark);">Intermediate</option>
-            <option value="Advanced" style="color: #f87171; background: var(--bg-dark);">Advanced</option>
-          </select>
-          <button class="btn-remove" onclick="removePlayer(this)">✕</button>
-        </div>
-        <div class="player-row">
-          <div class="player-num">3.</div>
-          <input type="text" class="player-input" placeholder="Player Name">
-          <select class="player-skill" onchange="styleSkillSelect(this)">
-            <option value="Beginner" style="color: #60a5fa; background: var(--bg-dark);">Beginner</option>
-            <option value="Intermediate" selected style="color: #f5c842; background: var(--bg-dark);">Intermediate</option>
-            <option value="Advanced" style="color: #f87171; background: var(--bg-dark);">Advanced</option>
-          </select>
-          <button class="btn-remove" onclick="removePlayer(this)">✕</button>
-        </div>
-        <div class="player-row">
-          <div class="player-num">4.</div>
-          <input type="text" class="player-input" placeholder="Player Name">
-          <select class="player-skill" onchange="styleSkillSelect(this)">
-            <option value="Beginner" style="color: #60a5fa; background: var(--bg-dark);">Beginner</option>
-            <option value="Intermediate" selected style="color: #f5c842; background: var(--bg-dark);">Intermediate</option>
-            <option value="Advanced" style="color: #f87171; background: var(--bg-dark);">Advanced</option>
-          </select>
-          <button class="btn-remove" onclick="removePlayer(this)">✕</button>
-        </div>
-        <div class="player-row">
-          <div class="player-num">5.</div>
-          <input type="text" class="player-input" placeholder="Player Name">
-          <select class="player-skill" onchange="styleSkillSelect(this)">
-            <option value="Beginner" style="color: #60a5fa; background: var(--bg-dark);">Beginner</option>
-            <option value="Intermediate" selected style="color: #f5c842; background: var(--bg-dark);">Intermediate</option>
-            <option value="Advanced" style="color: #f87171; background: var(--bg-dark);">Advanced</option>
-          </select>
-          <button class="btn-remove" onclick="removePlayer(this)">✕</button>
-        </div>
-        <div class="player-row">
-          <div class="player-num">6.</div>
-          <input type="text" class="player-input" placeholder="Player Name">
-          <select class="player-skill" onchange="styleSkillSelect(this)">
-            <option value="Beginner" style="color: #60a5fa; background: var(--bg-dark);">Beginner</option>
-            <option value="Intermediate" selected style="color: #f5c842; background: var(--bg-dark);">Intermediate</option>
-            <option value="Advanced" style="color: #f87171; background: var(--bg-dark);">Advanced</option>
-          </select>
-          <button class="btn-remove" onclick="removePlayer(this)">✕</button>
-        </div>
       </div>
       
       <button class="btn-add" onclick="addPlayer()">+ Add More Players</button>
@@ -950,8 +1155,18 @@ Example:
   <div id="tab-schedule" class="tab-content">
     <div class="schedule-header">
       <h2>Match Schedule</h2>
-      <button class="copy-btn" onclick="copySchedule()">📋 Copy for WhatsApp</button>
+      <div style="display: flex; gap: 8px;">
+        <button class="copy-btn" onclick="copySchedule()">📋 Copy Text</button>
+        <button class="copy-btn" onclick="exportScheduleAsImage()" style="background: rgba(245, 200, 66, 0.12); border-color: rgba(245, 200, 66, 0.4); color: var(--shuttle-gold);">📸 Save Image</button>
+      </div>
     </div>
+
+    <!-- View Switcher Tabs -->
+    <div class="view-selector-tabs">
+      <button class="view-tab-btn active" id="view-tab-list" onclick="setScheduleView('list')">📋 List View</button>
+      <button class="view-tab-btn" id="view-tab-map" onclick="setScheduleView('map')">🗺️ Visual Court Map</button>
+    </div>
+
     <div class="player-filter-bar">
       <label>Highlight Player:</label>
       <div id="filter-pills" class="player-filter-pills"></div>
@@ -990,8 +1205,111 @@ Example:
 let scheduleData = [];
 let allPlayers = [];
 let playerSkills = {};
+let playerPairs = {};
 let currentMode = 'regular';
 let currentFilter = null;
+let activeScheduleView = 'list';
+
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const temp = array[i];
+    array[i] = array[j];
+    array[j] = temp;
+  }
+  return array;
+}
+
+function getPairOptionsHtml(selected) {
+  let html = `<option value="solo" ${selected === 'solo' ? 'selected' : ''} style="color: var(--text-muted); background: var(--bg-dark);">Solo (No Pair)</option>`;
+  for (let i = 1; i <= 20; i++) {
+    html += `<option value="pair${i}" ${selected === `pair${i}` ? 'selected' : ''} style="color: var(--shuttle-gold); background: var(--bg-dark);">Pair ${i}</option>`;
+  }
+  return html;
+}
+
+function stylePairSelect(select) {
+  const val = select.value;
+  if (val === 'solo') {
+    select.style.borderColor = 'var(--border)';
+    select.style.color = 'var(--text-muted)';
+  } else {
+    select.style.borderColor = 'rgba(245, 200, 66, 0.5)';
+    select.style.color = 'var(--shuttle-gold)';
+  }
+}
+
+function getRestingUnits(units, restingCount, restCountMap, consecutivePlayed) {
+  let shuffledUnits = [...units];
+  shuffleArray(shuffledUnits);
+  
+  shuffledUnits.sort((a, b) => {
+    const avgRestA = a.players.reduce((sum, p) => sum + (restCountMap[p] || 0), 0) / a.size;
+    const avgRestB = b.players.reduce((sum, p) => sum + (restCountMap[p] || 0), 0) / b.size;
+    
+    if (Math.abs(avgRestA - avgRestB) > 0.001) {
+      return avgRestA - avgRestB;
+    }
+    
+    const maxStreakA = Math.max(...a.players.map(p => consecutivePlayed[p] || 0));
+    const maxStreakB = Math.max(...b.players.map(p => consecutivePlayed[p] || 0));
+    return maxStreakB - maxStreakA;
+  });
+  
+  let bestSubset = null;
+  let minRestScore = Infinity;
+  let maxStreakScoreOfResting = -1;
+  
+  function dfs(index, currentSubset, currentSize) {
+    if (currentSize === restingCount) {
+      const restScore = currentSubset.reduce((sum, u) => sum + u.players.reduce((s, p) => s + (restCountMap[p] || 0), 0), 0);
+      const streakScore = currentSubset.reduce((sum, u) => sum + u.players.reduce((s, p) => s + (consecutivePlayed[p] || 0), 0), 0);
+      
+      if (restScore < minRestScore) {
+        minRestScore = restScore;
+        maxStreakScoreOfResting = streakScore;
+        bestSubset = [...currentSubset];
+      } else if (restScore === minRestScore) {
+        if (streakScore > maxStreakScoreOfResting) {
+          maxStreakScoreOfResting = streakScore;
+          bestSubset = [...currentSubset];
+        }
+      }
+      return;
+    }
+    if (currentSize > restingCount || index >= shuffledUnits.length) {
+      return;
+    }
+    currentSubset.push(shuffledUnits[index]);
+    dfs(index + 1, currentSubset, currentSize + shuffledUnits[index].size);
+    currentSubset.pop();
+    
+    dfs(index + 1, currentSubset, currentSize);
+  }
+  
+  dfs(0, [], 0);
+  
+  if (!bestSubset) {
+    let size = 0;
+    bestSubset = [];
+    for (let u of shuffledUnits) {
+      if (size + u.size <= restingCount) {
+        bestSubset.push(u);
+        size += u.size;
+      }
+    }
+  }
+  
+  return bestSubset;
+}
+
+function setScheduleView(view) {
+  activeScheduleView = view;
+  document.querySelectorAll('.view-tab-btn').forEach(btn => btn.classList.remove('active'));
+  const activeBtn = document.getElementById('view-tab-' + view);
+  if (activeBtn) activeBtn.classList.add('active');
+  renderSchedule();
+}
 
 function setMode(mode) {
   currentMode = mode;
@@ -1032,14 +1350,19 @@ function addPlayer() {
       <option value="Intermediate" selected style="color: #f5c842; background: var(--bg-dark);">Intermediate</option>
       <option value="Advanced" style="color: #f87171; background: var(--bg-dark);">Advanced</option>
     </select>
+    <select class="player-pair" onchange="this.dataset.manuallyPaired = 'true'; stylePairSelect(this); saveCurrentPlayers(); renumberPlayers();">
+      ${getPairOptionsHtml('solo')}
+    </select>
     <button class="btn-remove" onclick="removePlayer(this)">✕</button>`;
   container.appendChild(row);
   renumberPlayers();
+  saveCurrentPlayers();
 }
 
 function removePlayer(btn) {
   btn.parentElement.remove();
   renumberPlayers();
+  saveCurrentPlayers();
 }
 
 // Helper to extract and sanitize a list of player names from any text content
@@ -1153,6 +1476,8 @@ function initPlayerList(players) {
   players.forEach((p) => {
     const row = document.createElement('div');
     row.className = 'player-row';
+    const pairVal = p.pair || 'solo';
+    const manuallyPairedAttr = p.manuallyPaired ? 'data-manually-paired="true"' : '';
     row.innerHTML = `<div class="player-num"></div>
       <input type="text" class="player-input" placeholder="Player Name" value="${p.name}">
       <select class="player-skill" onchange="styleSkillSelect(this)">
@@ -1160,10 +1485,277 @@ function initPlayerList(players) {
         <option value="Intermediate" ${p.skill === 'Intermediate' ? 'selected' : ''} style="color: #f5c842; background: var(--bg-dark);">Intermediate</option>
         <option value="Advanced" ${p.skill === 'Advanced' ? 'selected' : ''} style="color: #f87171; background: var(--bg-dark);">Advanced</option>
       </select>
+      <select class="player-pair" onchange="this.dataset.manuallyPaired = 'true'; stylePairSelect(this); saveCurrentPlayers(); renumberPlayers();" ${manuallyPairedAttr}>
+        ${getPairOptionsHtml(pairVal)}
+      </select>
       <button class="btn-remove" onclick="removePlayer(this)">✕</button>`;
     list.appendChild(row);
   });
   renumberPlayers();
+}
+
+// --- QUICK-ADD PLAYER POOL ---
+
+const DEFAULT_POOL = [
+  { name: 'Akash', skill: 'Advanced' },
+  { name: 'John', skill: 'Beginner' },
+  { name: 'Sarah', skill: 'Advanced' },
+  { name: 'Kenji', skill: 'Intermediate' },
+  { name: 'Yuka', skill: 'Intermediate' },
+  { name: 'Hiro', skill: 'Intermediate' },
+  { name: 'Tom', skill: 'Beginner' }
+];
+
+function initQuickAddPool() {
+  const container = document.getElementById('quickAddContainer');
+  if (!container) return;
+  
+  let pool = [];
+  try {
+    const saved = localStorage.getItem('tbh_quick_add_pool');
+    if (saved) {
+      pool = JSON.parse(saved);
+    } else {
+      // First-time setup: pre-populate with default demo pool
+      pool = DEFAULT_POOL;
+      localStorage.setItem('tbh_quick_add_pool', JSON.stringify(pool));
+    }
+  } catch (e) {
+    pool = DEFAULT_POOL;
+  }
+  
+  if (pool.length === 0) {
+    container.innerHTML = `<span style="font-size: 0.75rem; color: var(--text-muted); font-style: italic;">Pool is empty. Type names below and click "Save Player List" to add them!</span>`;
+    return;
+  }
+  
+  // Sort pool alphabetically
+  pool.sort((a, b) => a.name.localeCompare(b.name));
+  
+  container.innerHTML = '';
+  pool.forEach(p => {
+    let skillColor = '#f5c842'; // Intermediate
+    if (p.skill === 'Beginner') skillColor = '#60a5fa';
+    else if (p.skill === 'Advanced') skillColor = '#f87171';
+    
+    const pill = document.createElement('div');
+    pill.className = 'quick-add-pill';
+    pill.style.cssText = `
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(45, 158, 94, 0.08);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 4px 10px;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s ease;
+    `;
+    pill.setAttribute('onmouseover', "this.style.background='rgba(45, 158, 94, 0.2)'; this.style.borderColor='var(--court-light)';");
+    pill.setAttribute('onmouseout', "this.style.background='rgba(45, 158, 94, 0.08)'; this.style.borderColor='var(--border)';");
+    
+    pill.innerHTML = `
+      <span onclick="addPlayerFromPool('${p.name.replace(/'/g, "\\'")}', '${p.skill}')" style="font-size: 0.78rem; font-weight: 600; color: var(--text-primary); display: flex; align-items: center; gap: 5px;">
+        ${p.name}
+        <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: ${skillColor};"></span>
+      </span>
+      <span onclick="deletePlayerFromPool('${p.name.replace(/'/g, "\\'")}', event)" style="margin-left: 2px; font-size: 0.78rem; color: var(--text-muted); padding: 0 2px; line-height: 1; transition: color 0.2s; cursor: pointer;" onmouseover="this.style.color='#f87171'" onmouseout="this.style.color='var(--text-muted)'">✕</span>
+    `;
+    container.appendChild(pill);
+  });
+}
+
+function addPlayerFromPool(name, skill) {
+  const inputs = document.querySelectorAll('.player-input');
+  let alreadyExists = false;
+  let emptyInput = null;
+  
+  inputs.forEach(input => {
+    const val = input.value.trim();
+    if (val.toLowerCase() === name.toLowerCase()) {
+      alreadyExists = true;
+    }
+    if (!val && !emptyInput) {
+      emptyInput = input;
+    }
+  });
+  
+  if (alreadyExists) {
+    showToast(`"${name}" is already in today's list! ⚠️`);
+    return;
+  }
+  
+  if (emptyInput) {
+    emptyInput.value = name;
+    const skillSelect = emptyInput.parentElement.querySelector('.player-skill');
+    if (skillSelect) {
+      skillSelect.value = skill;
+      styleSkillSelect(skillSelect);
+    }
+  } else {
+    const container = document.getElementById('player-inputs');
+    const row = document.createElement('div');
+    row.className = 'player-row';
+    row.innerHTML = `<div class="player-num"></div>
+      <input type="text" class="player-input" placeholder="Player Name" value="${name}">
+      <select class="player-skill" onchange="styleSkillSelect(this)">
+        <option value="Beginner" ${skill === 'Beginner' ? 'selected' : ''} style="color: #60a5fa; background: var(--bg-dark);">Beginner</option>
+        <option value="Intermediate" ${skill === 'Intermediate' ? 'selected' : ''} style="color: #f5c842; background: var(--bg-dark);">Intermediate</option>
+        <option value="Advanced" ${skill === 'Advanced' ? 'selected' : ''} style="color: #f87171; background: var(--bg-dark);">Advanced</option>
+      </select>
+      <select class="player-pair" onchange="this.dataset.manuallyPaired = 'true'; stylePairSelect(this); saveCurrentPlayers(); renumberPlayers();">
+        ${getPairOptionsHtml('solo')}
+      </select>
+      <button class="btn-remove" onclick="removePlayer(this)">✕</button>`;
+    container.appendChild(row);
+  }
+  
+  renumberPlayers();
+  saveCurrentPlayers();
+  showToast(`Added ${name}! ⚡`);
+}
+
+function deletePlayerFromPool(name, event) {
+  if (event) event.stopPropagation();
+  
+  let pool = [];
+  try {
+    pool = JSON.parse(localStorage.getItem('tbh_quick_add_pool')) || [];
+  } catch (e) {
+    pool = [];
+  }
+  
+  pool = pool.filter(p => p.name.toLowerCase() !== name.toLowerCase());
+  localStorage.setItem('tbh_quick_add_pool', JSON.stringify(pool));
+  
+  initQuickAddPool();
+  showToast(`Removed "${name}" from pool`);
+}
+
+function clearQuickAddPool() {
+  if (confirm("Are you sure you want to clear your quick-add player pool? This cannot be undone.")) {
+    localStorage.setItem('tbh_quick_add_pool', JSON.stringify([]));
+    initQuickAddPool();
+    showToast("Quick-add pool cleared! 🗑️");
+  }
+}
+
+function saveCurrentPlayersToPool() {
+  const rows = document.querySelectorAll('.player-row');
+  const currentPlayers = [];
+  
+  let pool = [];
+  try {
+    pool = JSON.parse(localStorage.getItem('tbh_quick_add_pool')) || [];
+  } catch (e) {
+    pool = [];
+  }
+  
+  let addedCount = 0;
+  
+  rows.forEach(row => {
+    const nameVal = row.querySelector('.player-input').value.trim();
+    const skillVal = row.querySelector('.player-skill').value;
+    if (nameVal) {
+      currentPlayers.push({ name: nameVal, skill: skillVal });
+      
+      const existsInPool = pool.some(p => p.name.toLowerCase() === nameVal.toLowerCase());
+      if (!existsInPool) {
+        pool.push({ name: nameVal, skill: skillVal });
+        addedCount++;
+      }
+    }
+  });
+  
+  if (currentPlayers.length === 0) {
+    showToast('Add some players with names first! ⚠️');
+    return;
+  }
+  
+  localStorage.setItem('tbh_current_players', JSON.stringify(currentPlayers));
+  localStorage.setItem('tbh_quick_add_pool', JSON.stringify(pool));
+  
+  initQuickAddPool();
+  
+  if (addedCount > 0) {
+    showToast(`Saved! Active list persisted & added ${addedCount} new player(s) to pool! 💾`);
+  } else {
+    showToast(`Saved! Today's active player list persisted. 💾`);
+  }
+}
+
+function saveCurrentPlayers() {
+  const rows = document.querySelectorAll('.player-row');
+  const players = [];
+  rows.forEach(row => {
+    const nameVal = row.querySelector('.player-input').value.trim();
+    const skillVal = row.querySelector('.player-skill').value;
+    const pairSelect = row.querySelector('.player-pair');
+    const pairVal = pairSelect ? pairSelect.value : 'solo';
+    const manuallyPaired = pairSelect && pairSelect.dataset.manuallyPaired ? 'true' : '';
+    if (nameVal) {
+      players.push({ name: nameVal, skill: skillVal, pair: pairVal, manuallyPaired: manuallyPaired });
+    }
+  });
+  localStorage.setItem('tbh_current_players', JSON.stringify(players));
+}
+
+function loadCurrentState() {
+  try {
+    const savedPlayers = JSON.parse(localStorage.getItem('tbh_current_players'));
+    if (savedPlayers && savedPlayers.length > 0) {
+      initPlayerList(savedPlayers);
+    } else {
+      // Setup default 6 empty player slots
+      const defaultPlayers = Array.from({ length: 6 }, () => ({ name: '', skill: 'Intermediate', pair: 'solo' }));
+      initPlayerList(defaultPlayers);
+    }
+  } catch(e) {}
+
+  try {
+    const savedSchedule = JSON.parse(localStorage.getItem('tbh_current_schedule'));
+    if (savedSchedule && savedSchedule.length > 0) {
+      scheduleData = savedSchedule;
+      
+      // Re-populate globals
+      const rows = document.querySelectorAll('.player-row');
+      allPlayers = [];
+      playerSkills = {};
+      playerPairs = {};
+      rows.forEach(row => {
+        const nameVal = row.querySelector('.player-input').value.trim();
+        const skillVal = row.querySelector('.player-skill').value;
+        const pairSelect = row.querySelector('.player-pair');
+        const pairVal = pairSelect ? pairSelect.value : 'solo';
+        if (nameVal) {
+          allPlayers.push(nameVal);
+          playerSkills[nameVal] = skillVal;
+          playerPairs[nameVal] = pairVal;
+        }
+      });
+      
+      if (allPlayers.length === 0) {
+        const playersSet = new Set();
+        scheduleData.forEach(r => {
+          r.resting.forEach(p => playersSet.add(p));
+          r.matches.forEach(m => {
+            m.t1.forEach(p => playersSet.add(p));
+            m.t2.forEach(p => playersSet.add(p));
+          });
+        });
+        allPlayers = Array.from(playersSet);
+        allPlayers.forEach(p => {
+          playerSkills[p] = 'Intermediate';
+          playerPairs[p] = 'solo';
+        });
+      }
+
+      renderFilterPills();
+      renderSchedule();
+      renderStats();
+    }
+  } catch(e) {}
 }
 
 // Global smart paste listener on the player inputs list container (using event delegation)
@@ -1191,11 +1783,18 @@ document.getElementById('player-inputs').addEventListener('paste', function(e) {
     for (let i = startIndex; i < rows.length && playerIndex < players.length; i++) {
       const input = rows[i].querySelector('.player-input');
       const skillSelect = rows[i].querySelector('.player-skill');
+      const pairSelect = rows[i].querySelector('.player-pair');
       if (input) {
         input.value = players[playerIndex].name;
       }
       if (skillSelect) {
         skillSelect.value = players[playerIndex].skill;
+        styleSkillSelect(skillSelect);
+      }
+      if (pairSelect) {
+        pairSelect.value = 'solo';
+        delete pairSelect.dataset.manuallyPaired;
+        stylePairSelect(pairSelect);
       }
       playerIndex++;
     }
@@ -1213,6 +1812,9 @@ document.getElementById('player-inputs').addEventListener('paste', function(e) {
           <option value="Intermediate" ${p.skill === 'Intermediate' ? 'selected' : ''} style="color: #f5c842; background: var(--bg-dark);">Intermediate</option>
           <option value="Advanced" ${p.skill === 'Advanced' ? 'selected' : ''} style="color: #f87171; background: var(--bg-dark);">Advanced</option>
         </select>
+        <select class="player-pair" onchange="this.dataset.manuallyPaired = 'true'; stylePairSelect(this); saveCurrentPlayers(); renumberPlayers();">
+          ${getPairOptionsHtml('solo')}
+        </select>
         <button class="btn-remove" onclick="removePlayer(this)">✕</button>`;
       container.appendChild(row);
     }
@@ -1229,35 +1831,76 @@ function renumberPlayers() {
   rows.forEach((row, idx) => {
     const numEl = row.querySelector('.player-num');
     const selectEl = row.querySelector('.player-skill');
+    const pairEl = row.querySelector('.player-pair');
+    
     if (isFixed) {
-      const teamIdx = Math.floor(idx / 2);
-      let teamLetter = '';
-      let temp = teamIdx;
-      while (temp >= 0) {
-        teamLetter = String.fromCharCode(65 + (temp % 26)) + teamLetter;
-        temp = Math.floor(temp / 26) - 1;
+      // Auto-assign pairs sequentially if not manually edited yet
+      if (pairEl && !pairEl.dataset.manuallyPaired) {
+        const pairNum = Math.floor(idx / 2) + 1;
+        pairEl.value = `pair${pairNum}`;
+        stylePairSelect(pairEl);
       }
       
       numEl.style.width = '65px';
       
-      if (idx % 2 === 0) {
-        numEl.textContent = `Team ${teamLetter}:`;
-        numEl.style.color = 'var(--shuttle-gold)';
-        numEl.style.fontWeight = '700';
-        numEl.style.fontSize = '0.8rem';
-        numEl.style.textAlign = 'right';
-        row.style.marginTop = "16px";
-        row.style.borderTop = "1px dashed var(--border)";
-        row.style.paddingTop = "14px";
-      } else {
-        numEl.textContent = ``;
+      const currentPair = pairEl ? pairEl.value : 'solo';
+      if (currentPair === 'solo') {
+        numEl.textContent = `Solo:`;
         numEl.style.color = 'var(--text-muted)';
         numEl.style.fontWeight = '500';
-        numEl.style.fontSize = '1.1rem';
-        numEl.style.textAlign = 'center';
+        numEl.style.fontSize = '0.75rem';
+        numEl.style.textAlign = 'right';
         row.style.marginTop = "0";
         row.style.borderTop = "none";
         row.style.paddingTop = "0";
+      } else {
+        let firstWithThisPairIdx = -1;
+        let pairIndexInUse = 0;
+        const processedPairs = new Set();
+        
+        for (let rIdx = 0; rIdx < rows.length; rIdx++) {
+          const rPairEl = rows[rIdx].querySelector('.player-pair');
+          const rPairVal = rPairEl ? rPairEl.value : 'solo';
+          if (rPairVal !== 'solo') {
+            if (!processedPairs.has(rPairVal)) {
+              processedPairs.add(rPairVal);
+              if (rPairVal === currentPair) {
+                firstWithThisPairIdx = rIdx;
+                break;
+              }
+              pairIndexInUse++;
+            } else if (rPairVal === currentPair) {
+              break;
+            }
+          }
+        }
+        
+        if (firstWithThisPairIdx === idx) {
+          let teamLetter = '';
+          let temp = pairIndexInUse;
+          while (temp >= 0) {
+            teamLetter = String.fromCharCode(65 + (temp % 26)) + teamLetter;
+            temp = Math.floor(temp / 26) - 1;
+          }
+          
+          numEl.textContent = `Team ${teamLetter}:`;
+          numEl.style.color = 'var(--shuttle-gold)';
+          numEl.style.fontWeight = '700';
+          numEl.style.fontSize = '0.8rem';
+          numEl.style.textAlign = 'right';
+          row.style.marginTop = "16px";
+          row.style.borderTop = "1px dashed var(--border)";
+          row.style.paddingTop = "14px";
+        } else {
+          numEl.textContent = ``;
+          numEl.style.color = 'var(--text-muted)';
+          numEl.style.fontWeight = '500';
+          numEl.style.fontSize = '1.1rem';
+          numEl.style.textAlign = 'center';
+          row.style.marginTop = "0";
+          row.style.borderTop = "none";
+          row.style.paddingTop = "0";
+        }
       }
     } else {
       numEl.textContent = (idx + 1) + '.';
@@ -1274,11 +1917,15 @@ function renumberPlayers() {
     if (selectEl) {
       styleSkillSelect(selectEl);
     }
+    if (pairEl) {
+      stylePairSelect(pairEl);
+    }
   });
 }
 
 function clearPlayers() {
   document.querySelectorAll('.player-input').forEach(input => input.value = '');
+  saveCurrentPlayers();
 }
 
 function switchTab(tabId) {
@@ -1334,52 +1981,152 @@ function generateSchedule() {
 
   scheduleData = [];
 
-  // --- TOURNAMENT MODE (FIXED PAIRS) ---
+  const consecutivePlayed = {};
+  allPlayers.forEach(p => consecutivePlayed[p] = 0);
+
+  // --- TOURNAMENT MODE (FIXED PAIRS & CUSTOM PAIRINGS) ---
   if (currentMode === 'tournament') {
-    if (allPlayers.length % 2 !== 0) {
-      showToast('Tournament mode requires an even number of players! 🏸');
+    const fixedGroups = {};
+    const solos = [];
+    playersWithSkills.forEach(p => {
+      if (p.pair && p.pair !== 'solo') {
+        if (!fixedGroups[p.pair]) fixedGroups[p.pair] = [];
+        fixedGroups[p.pair].push(p.name);
+      } else {
+        solos.push(p.name);
+      }
+    });
+
+    const units = [];
+    // Group active players by pair ID. If a pair ID has exactly 2 active players, they are a fixed pair unit.
+    Object.keys(fixedGroups).forEach(pairId => {
+      const members = fixedGroups[pairId];
+      if (members.length === 2) {
+        units.push({
+          type: 'pair',
+          id: pairId,
+          players: members,
+          size: 2
+        });
+      } else {
+        members.forEach(m => solos.push(m));
+      }
+    });
+
+    // Add solos as units of size 1
+    solos.forEach(pName => {
+      units.push({
+        type: 'solo',
+        id: pName,
+        players: [pName],
+        size: 1
+      });
+    });
+
+    const numCourts = Math.min(requestedCourts, Math.floor(allPlayers.length / 4));
+    if (numCourts < 1) {
+      showToast('Need at least 4 active players for 1 court! 🏸');
       return;
     }
 
-    const pairs = [];
-    for (let i = 0; i < allPlayers.length; i += 2) {
-      pairs.push({ id: i/2, names: [allPlayers[i], allPlayers[i + 1]] });
-    }
+    const restingCount = allPlayers.length - (numCourts * 4);
 
-    const numCourts = Math.min(requestedCourts, Math.floor(pairs.length / 2));
-    const actualRestingPairs = pairs.length - (numCourts * 2);
+    const restCountMap = {};
+    allPlayers.forEach(p => restCountMap[p] = 0);
 
-    let pairRestCount = {};
-    let pairOpponentCount = {};
-    pairs.forEach(p => { pairRestCount[p.id] = 0; pairOpponentCount[p.id] = {}; });
+    const soloPartnerCount = {};
+    const playerOpponentCount = {};
+    allPlayers.forEach(p1 => {
+      soloPartnerCount[p1] = {};
+      playerOpponentCount[p1] = {};
+      allPlayers.forEach(p2 => {
+        soloPartnerCount[p1][p2] = 0;
+        playerOpponentCount[p1][p2] = 0;
+      });
+    });
 
     for (let rnd = 1; rnd <= numRounds; rnd++) {
-      let availablePairs = [...pairs];
-      availablePairs = availablePairs.sort(() => Math.random() - 0.5);
-      availablePairs.sort((a, b) => pairRestCount[a.id] - pairRestCount[b.id]);
+      // Find the best subset of units to rest
+      const restingUnits = getRestingUnits(units, restingCount, restCountMap, consecutivePlayed);
+      const restingUnitIds = new Set(restingUnits.map(u => u.id));
+      
+      const restingNames = [];
+      restingUnits.forEach(u => {
+        u.players.forEach(p => {
+          restingNames.push(p);
+          restCountMap[p] = (restCountMap[p] || 0) + 1;
+        });
+      });
 
-      const restingPairsData = availablePairs.splice(0, actualRestingPairs);
-      restingPairsData.forEach(p => pairRestCount[p.id]++);
+      const playingUnits = units.filter(u => !restingUnitIds.has(u.id));
+      const teams = [];
+      
+      // All playing 'pair' units are complete teams
+      playingUnits.forEach(u => {
+        if (u.type === 'pair') {
+          teams.push([...u.players]);
+        }
+      });
 
-      const restingNames = restingPairsData.flatMap(p => p.names);
-      let playingPairs = availablePairs;
-      const matches = [];
+      // Pair up solo playing units
+      const playingSolos = [];
+      playingUnits.forEach(u => {
+        if (u.type === 'solo') {
+          playingSolos.push(u.players[0]);
+        }
+      });
+      shuffleArray(playingSolos);
 
-      for (let c = 0; c < numCourts; c++) {
-        if (playingPairs.length < 2) break;
+      while (playingSolos.length >= 2) {
+        const p1 = playingSolos.shift();
+        playingSolos.sort((a, b) => (soloPartnerCount[p1][a] || 0) - (soloPartnerCount[p1][b] || 0));
+        const p2 = playingSolos.shift();
         
-        playingPairs.sort((a, b) => (pairOpponentCount[playingPairs[0].id][a.id] || 0) - (pairOpponentCount[playingPairs[0].id][b.id] || 0));
+        soloPartnerCount[p1][p2]++;
+        soloPartnerCount[p2][p1]++;
+        
+        teams.push([p1, p2]);
+      }
+      if (playingSolos.length > 0) {
+        teams.push([playingSolos[0]]);
+      }
 
-        const team1 = playingPairs.shift();
-        const team2 = playingPairs.shift();
-
-        pairOpponentCount[team1.id][team2.id] = (pairOpponentCount[team1.id][team2.id] || 0) + 1;
-        pairOpponentCount[team2.id][team1.id] = (pairOpponentCount[team2.id][team1.id] || 0) + 1;
-
-        matches.push({ t1: team1.names, t2: team2.names });
+      // Match teams against each other to form matches
+      shuffleArray(teams);
+      const matches = [];
+      
+      for (let c = 0; c < numCourts; c++) {
+        if (teams.length < 2) break;
+        const t1 = teams.shift();
+        
+        teams.sort((teamA, teamB) => {
+          const scoreA = t1.reduce((sum, p1) => sum + teamA.reduce((s, p2) => s + (playerOpponentCount[p1][p2] || 0), 0), 0);
+          const scoreB = t1.reduce((sum, p1) => sum + teamB.reduce((s, p2) => s + (playerOpponentCount[p1][p2] || 0), 0), 0);
+          return scoreA - scoreB;
+        });
+        
+        const t2 = teams.shift();
+        
+        t1.forEach(p1 => {
+          t2.forEach(p2 => {
+            playerOpponentCount[p1][p2]++;
+            playerOpponentCount[p2][p1]++;
+          });
+        });
+        
+        matches.push({ t1, t2 });
       }
 
       scheduleData.push({ rnd, matches, resting: restingNames });
+
+      // Update consecutive play streaks
+      allPlayers.forEach(p => {
+        if (restingNames.includes(p)) {
+          consecutivePlayed[p] = 0;
+        } else {
+          consecutivePlayed[p] = (consecutivePlayed[p] || 0) + 1;
+        }
+      });
     }
   } 
   // --- INDIVIDUAL MODES: REGULAR OR BALANCED ---
@@ -1412,9 +2159,14 @@ function generateSchedule() {
     };
 
     for (let rnd = 1; rnd <= numRounds; rnd++) {
-      // Step 1: Select resting players by sorting by restCount + randomized tie-breakers
-      let available = [...allPlayers].sort(() => Math.random() - 0.5);
-      available.sort((a, b) => restCount[a] - restCount[b]);
+      // Step 1: Select resting players by sorting by restCount (primary) and consecutivePlayed (secondary)
+      let available = shuffleArray([...allPlayers]);
+      available.sort((a, b) => {
+        if (restCount[a] !== restCount[b]) {
+          return restCount[a] - restCount[b];
+        }
+        return (consecutivePlayed[b] || 0) - (consecutivePlayed[a] || 0);
+      });
 
       const resting = available.splice(0, actualResting);
       resting.forEach(p => restCount[p]++);
@@ -1424,10 +2176,10 @@ function generateSchedule() {
       let bestRoundCost = Infinity;
 
       // Sample random configurations to find the best balance of skills and partner variety
-      const iterations = (currentMode === 'balanced') ? 5000 : 1000;
+      const iterations = (currentMode === 'balanced') ? 1000 : 200;
       for (let iter = 0; iter < iterations; iter++) {
         // Shuffle the playing players
-        const shuffled = [...available].sort(() => Math.random() - 0.5);
+        const shuffled = shuffleArray([...available]);
         
         const candidateMatches = [];
         let totalCost = 0;
@@ -1513,10 +2265,21 @@ function generateSchedule() {
       });
 
       scheduleData.push({ rnd, matches: bestRoundMatches, resting });
+
+      // Update consecutive play streaks
+      allPlayers.forEach(p => {
+        if (resting.includes(p)) {
+          consecutivePlayed[p] = 0;
+        } else {
+          consecutivePlayed[p] = (consecutivePlayed[p] || 0) + 1;
+        }
+      });
     }
   }
 
   currentFilter = null;
+  saveCurrentPlayers();
+  localStorage.setItem('tbh_current_schedule', JSON.stringify(scheduleData));
   renderFilterPills();
   renderSchedule();
   renderStats();
@@ -1585,17 +2348,20 @@ function renderSchedule() {
     container.classList.remove('filter-active');
   }
 
+  let fullHtml = '';
+
   scheduleData.forEach(round => {
     const hasFilteredPlayer = currentFilter && (
       round.resting.includes(currentFilter) || 
       round.matches.some(m => m.t1.includes(currentFilter) || m.t2.includes(currentFilter))
     );
     
-    // Set card class dynamically based on currentFilter. Only use has-player when a filter is active and the player matches.
+    // Set card class dynamically based on currentFilter
     const cardClass = currentFilter ? (hasFilteredPlayer ? 'round-card has-player' : 'round-card') : 'round-card';
     
     let html = `<div class="${cardClass}">
-      <div class="round-header"><div class="round-num">${round.rnd}</div> Round ${round.rnd}</div>`;
+      <div class="round-header"><div class="round-num">${round.rnd}</div> Round ${round.rnd}</div>
+      <div style="padding: 10px 18px 18px;">`;
     
     round.matches.forEach((m, idx) => {
       const hl = (p) => {
@@ -1606,24 +2372,73 @@ function renderSchedule() {
         return `<span>${p}</span>${bullet}`;
       };
       
-      html += `
-        <div class="court-row">
-          <div class="court-label">Court ${idx + 1}</div>
-          <div class="court-visual-card">
-            <div class="team-side left">
-              <div class="court-player">${hl(m.t1[0])}</div>
-              <div class="court-player">${hl(m.t1[1])}</div>
+      if (activeScheduleView === 'map') {
+        html += `
+          <div style="margin: 14px 0 20px;">
+            <div class="map-court-header">
+              <strong style="color: var(--shuttle-gold); font-size: 0.82rem; font-family:'Space Grotesk',sans-serif; display:flex; align-items:center; gap:4px;">🏸 Court ${idx + 1}</strong>
+              <div class="score-input-container">
+                <span style="font-size: 0.72rem; color: var(--text-muted);">Score:</span>
+                <input type="number" class="score-num-input" placeholder="0" min="0" value="${(m.score && m.score[0] !== null) ? m.score[0] : ''}" oninput="saveScore(${round.rnd}, ${idx}, 0, this)">
+                <span style="color: var(--text-muted); font-size: 0.72rem;">-</span>
+                <input type="number" class="score-num-input" placeholder="0" min="0" value="${(m.score && m.score[1] !== null) ? m.score[1] : ''}" oninput="saveScore(${round.rnd}, ${idx}, 1, this)">
+              </div>
             </div>
-            <div class="vs-badge-container">
-              <span class="vs-badge-text">VS</span>
+            <div class="visual-court-map">
+              <div class="court-center-net"></div>
+              <div class="court-net-label">NET</div>
+              <div class="court-short-service-left"></div>
+              <div class="court-short-service-right"></div>
+              <div class="court-center-line-left"></div>
+              <div class="court-center-line-right"></div>
+              <div class="court-doubles-sideline-top"></div>
+              <div class="court-doubles-sideline-bottom"></div>
+              
+              <!-- Left Team Nodes -->
+              <div class="court-player-node p-left-top ${m.t1[0] === currentFilter ? 'active-filter' : ''}">
+                👤 ${m.t1[0]} ${getSkillBullet(m.t1[0])}
+              </div>
+              <div class="court-player-node p-left-bottom ${m.t1[1] === currentFilter ? 'active-filter' : ''}">
+                👤 ${m.t1[1]} ${getSkillBullet(m.t1[1])}
+              </div>
+              
+              <!-- Right Team Nodes -->
+              <div class="court-player-node p-right-top ${m.t2[0] === currentFilter ? 'active-filter' : ''}">
+                👤 ${m.t2[0]} ${getSkillBullet(m.t2[0])}
+              </div>
+              <div class="court-player-node p-right-bottom ${m.t2[1] === currentFilter ? 'active-filter' : ''}">
+                👤 ${m.t2[1]} ${getSkillBullet(m.t2[1])}
+              </div>
             </div>
-            <div class="team-side right">
-              <div class="court-player">${hl(m.t2[0])}</div>
-              <div class="court-player">${hl(m.t2[1])}</div>
+          </div>`;
+      } else {
+        html += `
+          <div class="court-row" style="border-bottom: 1px solid rgba(255,255,255,0.04); padding: 12px 0;">
+            <div class="court-label">Court ${idx + 1}</div>
+            <div class="court-visual-card">
+              <div class="team-side left">
+                <div class="court-player">${hl(m.t1[0])}</div>
+                <div class="court-player">${hl(m.t1[1])}</div>
+              </div>
+              
+              <div class="vs-badge-container">
+                <div class="score-input-container">
+                  <input type="number" class="score-num-input" placeholder="0" min="0" value="${(m.score && m.score[0] !== null) ? m.score[0] : ''}" oninput="saveScore(${round.rnd}, ${idx}, 0, this)">
+                  <span class="vs-badge-text" style="opacity: 0.4;">-</span>
+                  <input type="number" class="score-num-input" placeholder="0" min="0" value="${(m.score && m.score[1] !== null) ? m.score[1] : ''}" oninput="saveScore(${round.rnd}, ${idx}, 1, this)">
+                </div>
+              </div>
+              
+              <div class="team-side right">
+                <div class="court-player">${hl(m.t2[0])}</div>
+                <div class="court-player">${hl(m.t2[1])}</div>
+              </div>
             </div>
-          </div>
-        </div>`;
+          </div>`;
+      }
     });
+
+    html += `</div>`; // Close court padding div
 
     if (round.resting.length > 0) {
       const restingHl = round.resting.map(p => {
@@ -1635,14 +2450,16 @@ function renderSchedule() {
       }).join(', ');
       
       html += `
-        <div class="rest-row">
+        <div class="rest-row" style="border-top: 1px solid rgba(255,255,255,0.06); padding: 12px 18px;">
           <div class="rest-label">Resting</div>
           <div class="rest-names">${restingHl}</div>
         </div>`;
     }
     html += `</div>`;
-    container.innerHTML += html;
+    fullHtml += html;
   });
+
+  container.innerHTML = fullHtml;
 }
 
 function renderStats() {
@@ -1658,12 +2475,16 @@ function renderStats() {
     return;
   }
 
-  // 1. Calculate base stats
+  // 1. Calculate base & interactive stats
   const stats = {};
   allPlayers.forEach(p => {
     stats[p] = {
       games: 0,
       rests: 0,
+      wins: 0,
+      losses: 0,
+      pointsWon: 0,
+      pointsLost: 0,
       partners: {},
       opponents: {}
     };
@@ -1706,6 +2527,30 @@ function renderStats() {
           if (stats[p2]) stats[p2].opponents[p1] = (stats[p2].opponents[p1] || 0) + 1;
         });
       });
+
+      // Update Score Tracking & Outcome Stats
+      if (m.score && m.score[0] !== null && m.score[1] !== null) {
+        const s1 = parseInt(m.score[0]);
+        const s2 = parseInt(m.score[1]);
+        
+        t1.forEach(p => {
+          if (stats[p]) {
+            stats[p].pointsWon += s1;
+            stats[p].pointsLost += s2;
+            if (s1 > s2) stats[p].wins++;
+            else if (s2 > s1) stats[p].losses++;
+          }
+        });
+        
+        t2.forEach(p => {
+          if (stats[p]) {
+            stats[p].pointsWon += s2;
+            stats[p].pointsLost += s1;
+            if (s2 > s1) stats[p].wins++;
+            else if (s1 > s2) stats[p].losses++;
+          }
+        });
+      }
     });
   });
 
@@ -1793,6 +2638,99 @@ function renderStats() {
       ${skillMetricsCardHtml}
     </div>
   `;
+
+  // 2. Render Leaderboard Section
+  const sortedLeaderboardPlayers = [...allPlayers].sort((a, b) => {
+    const sa = stats[a];
+    const sb = stats[b];
+    
+    const gamesWithScoresA = sa.wins + sa.losses;
+    const gamesWithScoresB = sb.wins + sb.losses;
+    
+    const winRateA = gamesWithScoresA > 0 ? (sa.wins / gamesWithScoresA) : 0;
+    const winRateB = gamesWithScoresB > 0 ? (sb.wins / gamesWithScoresB) : 0;
+    
+    if (winRateB !== winRateA) {
+      return winRateB - winRateA;
+    }
+    
+    const diffA = sa.pointsWon - sa.pointsLost;
+    const diffB = sb.pointsWon - sb.pointsLost;
+    if (diffB !== diffA) {
+      return diffB - diffA;
+    }
+    
+    if (sb.wins !== sa.wins) {
+      return sb.wins - sa.wins;
+    }
+    
+    return a.localeCompare(b);
+  });
+
+  const hasAnyScores = scheduleData.some(r => r.matches.some(m => m.score && m.score[0] !== null && m.score[1] !== null));
+
+  let leaderboardHtml = `
+    <div class="stat-card full" style="margin-bottom: 20px;">
+      <h3 style="font-size: 0.95rem; display: flex; align-items: center; gap: 6px; margin-bottom: 12px; color: var(--shuttle-gold);">
+        🏆 Player Leaderboard
+      </h3>`;
+
+  if (!hasAnyScores) {
+    leaderboardHtml += `
+      <div style="text-align: center; padding: 20px 10px; color: var(--text-muted); font-size: 0.8rem;">
+        <span style="font-size: 1.5rem; display: block; margin-bottom: 6px;">🏸</span>
+        No matches have scores entered yet.<br>
+        <span style="font-size: 0.72rem; color: var(--shuttle-gold); cursor: pointer; text-decoration: underline;" onclick="switchTab('schedule')">💡 Click here to enter scores on the Schedule tab!</span>
+      </div>`;
+  } else {
+    leaderboardHtml += `
+      <div style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
+        <table class="partner-table" style="width:100%; border-collapse: collapse;">
+          <thead>
+            <tr>
+              <th style="padding-left: 0; width: 45px; text-align: center;">Rank</th>
+              <th style="min-width: 100px; text-align: left;">Player</th>
+              <th style="text-align: center;">W - L</th>
+              <th style="text-align: center;">Win Rate</th>
+              <th style="text-align: center;">Points +/-</th>
+              <th style="text-align: center;">Total Games</th>
+            </tr>
+          </thead>
+          <tbody>`;
+
+    sortedLeaderboardPlayers.forEach((p, index) => {
+      const pStats = stats[p];
+      const gamesWithScores = pStats.wins + pStats.losses;
+      const winRate = gamesWithScores > 0 ? Math.round((pStats.wins / gamesWithScores) * 100) : 0;
+      const pointsDiff = pStats.pointsWon - pStats.pointsLost;
+      const sign = pointsDiff > 0 ? '+' : '';
+      const diffColor = pointsDiff > 0 ? '#4ade80' : (pointsDiff < 0 ? '#f87171' : 'var(--text-muted)');
+      
+      const s = playerSkills[p] || 'Intermediate';
+      const sClass = s === 'Beginner' ? 'badge-blue' : (s === 'Advanced' ? 'badge-red' : 'badge-yellow');
+      const badgeHtml = (currentMode === 'balanced') ? `<span class="badge ${sClass}" style="font-size: 0.55rem; margin-left: 4px; padding: 1px 4px;">${s}</span>` : '';
+      
+      const isTop3 = index < 3;
+      const medal = index === 0 ? '🥇' : (index === 1 ? '🥈' : (index === 2 ? '🥉' : `${index + 1}`));
+      const rowStyle = isTop3 ? 'background: rgba(245, 200, 66, 0.03);' : '';
+
+      leaderboardHtml += `
+        <tr style="${rowStyle}">
+          <td style="text-align: center; font-weight: bold; font-size: 0.85rem; color: var(--shuttle-gold); padding: 8px 4px;">${medal}</td>
+          <td style="font-weight: 600; color: var(--text-primary); padding: 8px 4px; text-align: left;">${p}${badgeHtml}</td>
+          <td style="text-align: center; font-variant-numeric: tabular-nums; padding: 8px 4px;">${pStats.wins}W - ${pStats.losses}L</td>
+          <td style="text-align: center; font-weight: 700; color: var(--court-light); font-variant-numeric: tabular-nums; padding: 8px 4px;">${winRate}%</td>
+          <td style="text-align: center; font-weight: 600; color: ${diffColor}; font-variant-numeric: tabular-nums; padding: 8px 4px;">${sign}${pointsDiff}</td>
+          <td style="text-align: center; color: var(--text-muted); font-variant-numeric: tabular-nums; padding: 8px 4px;">${pStats.games}</td>
+        </tr>`;
+    });
+
+    leaderboardHtml += `
+          </tbody>
+        </table>
+      </div>`;
+  }
+  leaderboardHtml += `</div>`;
 
   // Create grid for detailed tables
   let gridHtml = `<div class="stats-grid">`;
@@ -1884,29 +2822,60 @@ function renderStats() {
     const badgeHtml = (currentMode === 'balanced') ? `<span class="badge ${sClass}" style="font-size: 0.6rem; margin-left: 6px; padding: 1px 4px;">${s}</span>` : '';
 
     if (isTournamentMode) {
-      // Find partner (fixed pair)
-      const isIdx = allPlayers.indexOf(p);
-      const partnerIdx = isIdx % 2 === 0 ? isIdx + 1 : isIdx - 1;
-      const partnerName = allPlayers[partnerIdx];
-
-      // Opponents are all other players except themselves and partner
-      const possibleOpponents = allPlayers.filter(o => o !== p && o !== partnerName);
-      const opponentsMet = possibleOpponents.filter(o => (pStats.opponents[o] || 0) > 0);
-      const unmetCount = possibleOpponents.length - opponentsMet.length;
-
-      if (unmetCount === 0) {
-        metBadge = `<span class="badge badge-green">All Met (${opponentsMet.length})</span>`;
-      } else {
-        metBadge = `<span class="badge badge-yellow">${unmetCount} Unmet</span>`;
+      // Check if player has a fixed partner in playerPairs
+      const currentPairId = playerPairs[p];
+      let partnerName = null;
+      if (currentPairId && currentPairId !== 'solo') {
+        partnerName = allPlayers.find(otherP => otherP !== p && playerPairs[otherP] === currentPairId);
       }
 
-      // Generate frequencies list
-      const freqs = possibleOpponents.map(o => {
-        const count = pStats.opponents[o] || 0;
-        return `${o}: <strong style="color:var(--shuttle-gold);">${count}</strong>`;
-      }).join(', ');
-      
-      freqBreakdown = `<span style="font-size:0.75rem; color:var(--text-muted);">Partner: <strong>${partnerName}</strong> &nbsp;|&nbsp; Opponents &rarr; ${freqs}</span>`;
+      if (partnerName) {
+        // Fixed partner case
+        const possibleOpponents = allPlayers.filter(o => o !== p && o !== partnerName);
+        const opponentsMet = possibleOpponents.filter(o => (pStats.opponents[o] || 0) > 0);
+        const unmetCount = possibleOpponents.length - opponentsMet.length;
+
+        if (unmetCount === 0) {
+          metBadge = `<span class="badge badge-green">All Met (${opponentsMet.length})</span>`;
+        } else {
+          metBadge = `<span class="badge badge-yellow">${unmetCount} Unmet</span>`;
+        }
+
+        const freqs = possibleOpponents.map(o => {
+          const count = pStats.opponents[o] || 0;
+          return `${o}: <strong style="color:var(--shuttle-gold);">${count}</strong>`;
+        }).join(', ');
+        
+        freqBreakdown = `<span style="font-size:0.75rem; color:var(--text-muted);">Fixed Partner: <strong>${partnerName}</strong> &nbsp;|&nbsp; Opponents &rarr; ${freqs}</span>`;
+      } else {
+        // Solo tournament player case
+        const possiblePartners = allPlayers.filter(o => o !== p);
+        const partnersMet = possiblePartners.filter(o => (pStats.partners[o] || 0) > 0);
+        const partnerFreqs = possiblePartners.map(o => {
+          const count = pStats.partners[o] || 0;
+          return `${o}: <strong style="color:var(--shuttle-gold);">${count}</strong>`;
+        }).filter((_, i) => (pStats.partners[possiblePartners[i]] || 0) > 0).join(', ') || 'None';
+
+        const possibleOpponents = allPlayers.filter(o => o !== p);
+        const opponentsMet = possibleOpponents.filter(o => (pStats.opponents[o] || 0) > 0);
+        const unmetCount = possibleOpponents.length - opponentsMet.length;
+
+        if (unmetCount === 0) {
+          metBadge = `<span class="badge badge-green">All Met (${opponentsMet.length})</span>`;
+        } else {
+          metBadge = `<span class="badge badge-yellow">${unmetCount} Unmet</span>`;
+        }
+
+        const opponentFreqs = possibleOpponents.map(o => {
+          const count = pStats.opponents[o] || 0;
+          return `${o}: <strong style="color:var(--shuttle-gold);">${count}</strong>`;
+        }).join(', ');
+
+        freqBreakdown = `<div style="font-size:0.75rem; color:var(--text-muted); line-height:1.4;">
+          Partners &rarr; ${partnerFreqs}<br>
+          Opponents &rarr; ${opponentFreqs}
+        </div>`;
+      }
     } else {
       // Regular mode: Partners
       const possiblePartners = allPlayers.filter(o => o !== p);
@@ -1947,7 +2916,226 @@ function renderStats() {
 
   gridHtml += `</div>`; // Close grid
 
-  container.innerHTML = summaryHtml + gridHtml;
+  container.innerHTML = summaryHtml + leaderboardHtml + gridHtml;
+}
+
+function saveScore(roundNum, matchIdx, teamIdx, input) {
+  const roundIdx = roundNum - 1;
+  if (!scheduleData[roundIdx] || !scheduleData[roundIdx].matches[matchIdx]) return;
+  
+  const valStr = input.value.trim();
+  const val = valStr === '' ? null : parseInt(valStr);
+  
+  if (!scheduleData[roundIdx].matches[matchIdx].score) {
+    scheduleData[roundIdx].matches[matchIdx].score = [null, null];
+  }
+  
+  scheduleData[roundIdx].matches[matchIdx].score[teamIdx] = val;
+  
+  // Persist to localStorage
+  localStorage.setItem('tbh_current_schedule', JSON.stringify(scheduleData));
+  
+  // Update other views & Stats tab in real time
+  // If we want input values in both list/map view to sync, we just re-render stats.
+  // But wait! If we re-render schedule immediately, focus would be lost on the input!
+  // So we only call renderStats() to update statistics in real time without redrawing the active input's parent.
+  renderStats();
+}
+
+function exportScheduleAsImage() {
+  if (scheduleData.length === 0) {
+    showToast('Generate a schedule first!');
+    return;
+  }
+  
+  showToast('Generating schedule image... 📸');
+  
+  // Create an offscreen canvas
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  
+  // Set width to 600px (great for mobile and WhatsApp sharing)
+  const width = 600;
+  
+  // Calculate height dynamically
+  const headerHeight = 120;
+  const footerHeight = 60;
+  const padding = 30;
+  
+  let currentY = headerHeight + padding;
+  
+  // Calculate individual round block heights
+  const roundHeights = [];
+  scheduleData.forEach(round => {
+    let roundH = 40; // Round Header height
+    roundH += round.matches.length * 36; // space for matches
+    if (round.resting.length > 0) {
+      roundH += 30; // resting row
+    }
+    roundH += 25; // space after round
+    roundHeights.push(roundH);
+  });
+  
+  const totalRoundsHeight = roundHeights.reduce((a, b) => a + b, 0);
+  const height = headerHeight + padding + totalRoundsHeight + footerHeight;
+  
+  canvas.width = width;
+  canvas.height = height;
+  
+  // --- DRAW BACKGROUND ---
+  const bgGrad = ctx.createLinearGradient(0, 0, 0, height);
+  bgGrad.addColorStop(0, '#09170e');
+  bgGrad.addColorStop(0.5, '#112d19');
+  bgGrad.addColorStop(1, '#09170e');
+  ctx.fillStyle = bgGrad;
+  ctx.fillRect(0, 0, width, height);
+  
+  // Draw gold border around canvas
+  ctx.strokeStyle = '#f5c842';
+  ctx.lineWidth = 4;
+  ctx.strokeRect(2, 2, width - 4, height - 4);
+  
+  // Draw subtle court visual decoration in background
+  ctx.strokeStyle = 'rgba(45, 158, 94, 0.08)';
+  ctx.lineWidth = 1.5;
+  ctx.strokeRect(30, headerHeight + 10, width - 60, height - headerHeight - footerHeight - 20);
+  ctx.beginPath();
+  ctx.moveTo(width / 2, headerHeight + 10);
+  ctx.lineTo(width / 2, height - footerHeight - 10);
+  ctx.stroke();
+  
+  // --- DRAW HEADER ---
+  ctx.fillStyle = 'rgba(245, 200, 66, 0.06)';
+  ctx.fillRect(4, 4, width - 8, headerHeight - 4);
+  ctx.beginPath();
+  ctx.moveTo(4, headerHeight);
+  ctx.lineTo(width - 4, headerHeight);
+  ctx.strokeStyle = 'rgba(245, 200, 66, 0.3)';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  
+  // Title
+  ctx.fillStyle = '#f5c842';
+  ctx.font = 'bold 24px "Space Grotesk", "Inter", "Helvetica", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('🏸 TOKYO BLACK HAWKS', width / 2, 45);
+  
+  // Subtitle
+  ctx.fillStyle = '#e8f5ec';
+  ctx.font = '600 14px "Inter", "Helvetica", sans-serif';
+  ctx.fillText('MATCH SCHEDULE', width / 2, 70);
+  
+  const todayStr = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' });
+  ctx.fillStyle = '#7aab87';
+  ctx.font = '500 11px "Inter", sans-serif';
+  ctx.fillText(`${todayStr}  ·  ${currentMode.toUpperCase()} MODE`, width / 2, 92);
+  
+  // --- DRAW ROUNDS ---
+  scheduleData.forEach((round, rIdx) => {
+    const roundH = roundHeights[rIdx];
+    
+    // Draw round card background
+    ctx.fillStyle = 'rgba(22, 34, 21, 0.8)';
+    ctx.strokeStyle = 'rgba(45, 158, 94, 0.25)';
+    ctx.lineWidth = 1;
+    ctx.fillRect(30, currentY, width - 60, roundH - 25);
+    ctx.strokeRect(30, currentY, width - 60, roundH - 25);
+    
+    // Round title
+    ctx.fillStyle = '#f5c842';
+    ctx.font = 'bold 15px "Space Grotesk", sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText(`Round ${round.rnd}`, 45, currentY + 24);
+    
+    // Split line
+    ctx.strokeStyle = 'rgba(45, 158, 94, 0.15)';
+    ctx.beginPath();
+    ctx.moveTo(30, currentY + 34);
+    ctx.lineTo(width - 30, currentY + 34);
+    ctx.stroke();
+    
+    let matchY = currentY + 54;
+    
+    round.matches.forEach((m, mIdx) => {
+      // Court badge
+      ctx.fillStyle = 'rgba(245, 200, 66, 0.1)';
+      ctx.fillRect(45, matchY - 14, 62, 20);
+      ctx.strokeStyle = 'rgba(245, 200, 66, 0.3)';
+      ctx.strokeRect(45, matchY - 14, 62, 20);
+      
+      ctx.fillStyle = '#f5c842';
+      ctx.font = 'bold 10px "Space Grotesk", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(`COURT ${mIdx + 1}`, 76, matchY);
+      
+      // Team 1 players
+      ctx.textAlign = 'left';
+      ctx.font = '500 13px "Inter", sans-serif';
+      ctx.fillStyle = '#e8f5ec';
+      const team1Text = `${m.t1[0]} & ${m.t1[1]}`;
+      ctx.fillText(team1Text, 120, matchY);
+      
+      // VS or Score text
+      ctx.textAlign = 'center';
+      ctx.font = 'bold 12px "Space Grotesk", sans-serif';
+      if (m.score && m.score[0] !== null && m.score[1] !== null) {
+        ctx.fillStyle = '#f5c842';
+        ctx.fillText(`${m.score[0]} - ${m.score[1]}`, 380, matchY);
+      } else {
+        ctx.fillStyle = '#7aab87';
+        ctx.fillText('VS', 380, matchY);
+      }
+      
+      // Team 2 players
+      ctx.textAlign = 'left';
+      ctx.fillStyle = '#e8f5ec';
+      ctx.font = '500 13px "Inter", sans-serif';
+      const team2Text = `${m.t2[0]} & ${m.t2[1]}`;
+      ctx.fillText(team2Text, 430, matchY);
+      
+      matchY += 36;
+    });
+    
+    // Resting row
+    if (round.resting.length > 0) {
+      ctx.fillStyle = 'rgba(37, 99, 235, 0.08)';
+      ctx.fillRect(30, matchY - 14, width - 60, 24);
+      
+      ctx.fillStyle = '#93c5fd';
+      ctx.font = 'bold 10px "Space Grotesk", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('RESTING', 76, matchY + 2);
+      
+      ctx.textAlign = 'left';
+      ctx.font = '500 12px "Inter", sans-serif';
+      ctx.fillStyle = '#93c5fd';
+      ctx.fillText(round.resting.join(', '), 120, matchY + 2);
+    }
+    
+    currentY += roundH;
+  });
+  
+  // --- DRAW FOOTER ---
+  ctx.fillStyle = 'rgba(74, 122, 90, 0.08)';
+  ctx.fillRect(4, height - footerHeight, width - 8, footerHeight - 4);
+  
+  ctx.fillStyle = '#7aab87';
+  ctx.font = '500 11px "Inter", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('🏸 TBH Badminton Scheduler  ·  Made by Akash', width / 2, height - 25);
+  
+  // Download action
+  try {
+    const dataUrl = canvas.toDataURL('image/png');
+    const link = document.createElement('a');
+    link.download = `tbh_badminton_schedule_${new Date().toISOString().slice(0, 10)}.png`;
+    link.href = dataUrl;
+    link.click();
+    showToast('Download started! 📸');
+  } catch (err) {
+    console.error(err);
+    showToast('Failed to generate image download.');
+  }
 }
 
 function copySchedule() {
@@ -1959,7 +3147,8 @@ function copySchedule() {
   scheduleData.forEach(round => {
     text += `🔥 Round ${round.rnd} ------------------\n`;
     round.matches.forEach((m, idx) => {
-      text += `Court ${idx + 1}: ${m.t1[0]} & ${m.t1[1]} vs ${m.t2[0]} & ${m.t2[1]}\n`;
+      const scoreStr = (m.score && m.score[0] !== null && m.score[1] !== null) ? ` (${m.score[0]} - ${m.score[1]})` : '';
+      text += `Court ${idx + 1}: ${m.t1[0]} & ${m.t1[1]} vs ${m.t2[0]} & ${m.t2[1]}${scoreStr}\n`;
     });
     if (round.resting.length > 0) {
       text += `😴 Resting: ${round.resting.join(', ')}\n`;
@@ -1971,6 +3160,20 @@ function copySchedule() {
 
 // Initial mode setup
 setMode('regular');
+initQuickAddPool();
+loadCurrentState();
+
+// Add event delegation to save players automatically as they type or modify skill levels
+document.getElementById('player-inputs').addEventListener('input', function(e) {
+  if (e.target.classList.contains('player-input')) {
+    saveCurrentPlayers();
+  }
+});
+document.getElementById('player-inputs').addEventListener('change', function(e) {
+  if (e.target.classList.contains('player-skill') || e.target.classList.contains('player-input')) {
+    saveCurrentPlayers();
+  }
+});
 </script>
 
 </body>
